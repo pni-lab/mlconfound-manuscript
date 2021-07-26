@@ -4,8 +4,13 @@
 
 \usepackage{arxiv}
 
+\usepackage{array}
+
 \usepackage{tikz}
 \usetikzlibrary{snakes,arrows,shapes}
+
+\usepackage{caption} 
+\captionsetup[table]{skip=10pt}
 
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
@@ -16,6 +21,7 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{mathtools}
+\usepackage[bb=boondox]{mathalfa}
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
 \newtheorem{theorem}{Theorem} %[section]
@@ -92,9 +98,9 @@ First, measurement artifacts can obviously be considered as confounders. For ins
 Second, depending on the research question, demographic and psychometric variables can also be considered as confounders during predictive modelling. E.g. resting-state functional connectivity is known to be strongly predictive to  demographic age \citep{wang2012decoding, dukart2011age} and moderately to fluid intelligence \citep{he2020deep, cole2012global}. As fluid intelligence is known to decline with aging, \citep{kievit2018neural}, models trained to predict intelligence can provide reasonable performance by simply picking up on age-related variance. 
 Third, center-effects (or in general, batch effect) in multi-center studies can also cause significant bias in predictive models \citep{leek2010tackling, da2020performance}. In this case, predictive models can utilize center-effects to explain (random or true) center-differences in the predictive target. Such models will display worse-than-expected performance when applied on data from new centers.
 
-Recently, various data harmonization approaches have been suggested to mitigate confounder-bias, ranging from simple matching \citep{rao2017predictive} or regression-based techniques \citep{rao2017predictive, dukart2011age, spisak2014voxel abdulkadir2014reduction} to the popular non-parametric empirical Bayes-based method of \cite{johnson2007adjusting} or sophisticated deep-learning oriented solutions \citep{zhao2020training, hognon2019standardization}). However, it is often unclear which variables should be considered as confounders during harmonization and considering many variables as confounder holds risks of eliminating signal-of-interest \citep{wachinger2021detect}.
+Recently, various data harmonization approaches have been suggested to mitigate confounder-bias, ranging from simple matching \citep{rao2017predictive} or regression-based techniques \citep{rao2017predictive, dukart2011age, spisak2014voxel, abdulkadir2014reduction} to the popular non-parametric empirical Bayes-based method of \cite{johnson2007adjusting} or sophisticated deep-learning oriented solutions \citep{zhao2020training, hognon2019standardization}). However, it is often unclear which variables should be considered as confounders during harmonization and considering many variables as confounder holds risks of eliminating signal-of-interest \citep{wachinger2021detect}.
 
-Powerful statistical tests to quantify the confounding effect of certain variables in predictive models could largely foster both the the identification of confounders to correct for and the assessment of the effectiveness of various harmonization or other confound-mitigation approaches. Such methods, however, have to tackle the fact that the outputs of predictive models often have non-normal distributions (due to e.g. regularization).
+Powerful statistical tests to quantify the confounding effect of certain variables in predictive models could largely foster both the the identification of confounders to correct for and the assessment of the effectiveness of various harmonization or other confound-mitigation approaches. Such methods, however, have to tackle the fact that the outputs of predictive models often have non-normal distributions (due to e.g. regularization) \citep{garcia2009study, kristensen2017whole}.
 
 Recently three dedicated techniques \citep{chaibub2019permutation, ferrari2020measuring, wachinger2021detect} have been proposed for quantifying confounder bias in predictive modelling.
 
@@ -105,13 +111,16 @@ The Kolmogorov Complexity-based causal inference test, as proposed by \cite{wach
 
 % todo: RO and CI: classification, KC: regression
 
-In this paper, I formulate the 'confounder problem' as a special case of conditional independence testing. This allows relating the problem to the seminal work of \cite{shah2020hardness}, who showed that, without placing some assumptions on the joint distribution of the involved variables, establishing a conditional independence test with a valid type I error control and non-trivial power is effectively impossible ("no free lunch" theorem).
+In this paper, I formulate the 'confounder problem' as a special case of conditional independence testing \citep{dawid1979conditional}. This allows relating the problem to the seminal work of \cite{shah2020hardness}, who showed that, without placing some assumptions on the joint distribution of the involved variables, establishing a conditional independence test with a valid type I error control and non-trivial power is effectively impossible ("no free lunch" theorem).
 
-Next, I propose the conditional permutation test, a statistical test of conditional independence, recently introduced by \cite{berrett2020conditional}, as a test for evaluating confounder-bias of predictive models, based only on the target variable, the model predictions and the putative confounder.
+Next, I consider the conditional permutation test, a statistical test of conditional independence, recently introduced by \cite{berrett2020conditional}, as a test for evaluating confounder-bias of predictive models.
 
-We propose modifications to the original approach, that allow easy evaluation of the conditional distribution of $c|y$, but puts no assumptions on the distribution of the predicted values (which are often non-normal in practice).
-The validity of the type I error control and the statistical power of the test is evaluated with simulated data (assuming non-normal model output).
-The proposed test is then applied to provide evidence of motion-bias in the Autism Brain Imaging Data Exchange (ABIDE) dataset \citep{di2014autism} and on data from the Human Connectome Project.
+Within this framework, various confounder-related null hypotheses can be tested, so that no assumption is to be made about the distribution of one of the conditioned variables. As normality is typically a reasonable assumption for the target and confounder variables but not for the predictions of the model, the focus is put on the cases allowing inference without assumptions on the model predictions' distribution.
+Two cases satisfy this requirement, one testing whether the model's explained variance can be exclusively attributed to the confounder and the other testing whether the model utilizes any confounder-variance, above what's already present in the target variable.
+Both tests require only on the target variable, the model predictions and the putative confounder, that is, they can be performed without needing to re-fit the model.
+Additionally, a regression-based estimation of the conditional distribution of $c|y$ is proposed, which allows testing confounder bias without a-priory knowledge about the conditional distribution and without any assumptions on the distribution of the predicted values (which are often non-normal in practice).
+The validity of the type I error control and the statistical power of both tests are evaluated with simulated data (assuming non-normal model output).
+The proposed tests are then applied on functiuonal brain connectivity data to provide evidence of motion-bias in a model trained on the Autism Brain Imaging Data Exchange (ABIDE) dataset \citep{di2014autism} and to evaluate the age dependence of fluid intelligence predictions on data from the Human Connectome Project.
 
 
 
@@ -141,55 +150,197 @@ supervised learning in biomedical contexts
 
 \section{Methods}
 
-\renewcommand{\arraystretch}{2}
-\begin{table}[]
-\begin{tabular}{lll}
-\textbf{1.} & $y \independent \hat{y} | c$  & \quad model exclusively driven by confounder  \\
-\hline
-\textbf{2.} & $y \independent c | \hat{y}$ &  \quad model captures all variance in confounder \\
-\hline
-\textbf{3.} & $\hat{y} \independent c | y$ &   \quad model does not capture more confound than what is already given in the target variable\\
- &  
-\end{tabular}
-\caption{\label{tab:conditional-independence-cases} Possibilities when testing conditional independence in potentially biased predictive models. ($y$: prediction target, $\hat{y}$: predictions, $c$: confounder variable) }
-\end{table}
-
 \subsection{Notation and Background}
 
+In a predictive modelling setting, let $Y$ denote the target variable, $\hat{Y}$ denote model output, i.e. the predictions for $Y$ and let $C$ denote a variable, which is considered as a confounder. Depending on the research question, the influence of $C$ on the model predictions $\hat{Y}$ is subject to be kept at a negligible level, or it is to be proven that the model is not completely driven by $C$. Below, I summarize how testing conditional independence \citep{dawid1979conditional} among these variables allows addressing the above questions and build on the conditional permutation test of \cite{berrett2020conditional} to perform inference without assumptions on the distribution of the model output, where normality is often violated \citep{garcia2009study, kristensen2017whole}.
+
+\subsubsection*{Testing conditional independence}
+
+Let us shall assume that the data consist of independent and identically distributed (IID) data points $(x_i, y_i, z_i) \in X \times Y \times Z$ for $i=1, \dots , n$ and write $X=(x_1, \dots ,x_n)$, $Y=(y_1, \dots, y_n)$ and $Z=(Z_1, \dots, Zn)$. 
+
+$X$ is \emph{conditionally independent} of $Y$ given $Z$ $X \independent Y | Z$, if for all $x, y, z$ with $p(z) > 0$, we have $p(x, y|z) = p(x|z)p(y|z)$ \citep{dawid1979conditional}.
+
+While conditional independence lies at the heart of several fundamental concepts is statistics and  plays an increasingly important role in various fields of applied statistics (and particularly in biomedical applications, \citep{spirtes2000causation, peters2016causal, fiedler2011mediation, candes2016panning}, recently, \cite{shah2020hardness} have raised important concerns regarding conditional independence testing.
+In their "no free luch" theorem, Shah and Peters has shown that, without placing some assumptions on the joint distribution of $(X, Y, Z)$, conditional testing is effectively impossible. In other words, no test exists that - for all distributions - provides a valid type I error control and, at the same time, has a non-trivial statistical power.
+
+This result is in strong contrast to unconditional independence testing, for which permutation tests  \citep{pitman1937significance, fisher1942189} allow for the correct calibration of any hypothesis test. Even if the null hypothesis $H0 :X \independent Y|Z$ is true, $X$ and $Y$ might be highly marginally dependent due to their dependence on $Z$,  thus the permutation null-distribution will be invalid.
+
+The "no-free-lunch" theorem has important implications for confound-testing in predictive modelling where the distribution of the model outputs - depending on the applied machine learning model - is \emph{unknown}.
+
+Nevertheless, as shown by \cite{berrett2020conditional}, if information about the conditional distribution $Q(X|Z)$ is available, sampling from a non-uniform distribution over the set of possible permutations $\pi$ can incorporate available distributional information into permutation-based inference and achieve a valid type I error control and a non-trivial power.
+Below we give a short description of the procedure of \cite{berrett2020conditional}.
+
+\subsubsection*{The conditional permutation test for independence}
+
+The conditional permutation test (CPT) of \cite{berrett2020conditional} build on the conditional randomization test of \cite{candes2016panning} and ensures that \emph{no assumptions} are made about the distribution of the response variable Y but, instead, it is assumed that the conditional distribution of X given Z is known.
+
+CPT generates a null-distribution for an arbitrary predefined test statistic $T(X,Y,Z)$ by sampling permutation based "copies" of $X$,
+
+$$x_i^{(j)} \sim Q(\cdot|z_i) \ $$
+
+where, $Q(.|z)$ denotes the conditional distribution of $X$ given $Z=z$ and $j=1,\dots, m$ indexes the copies of $X$ and so that so that $X^{(i)} = (x_1^{(j)}, \dots, x_n^{(j)})$ is a permutation of the original vector $X = (x_1, \dots, x_n)$. This mechanism creates copies $X^{(1)}, \dots ,X^{(m)}$ that are exchangeable with the original vector X under the null hypothesis that $X \independent Y | Z$.
+
+Under the null hypothesis, the triples $(X,Y,Z), (X^{(1)},Y,Z),\dots,(X^{(m)},Y,Z)$ are all identically distributed and exchangeable, and so are the 
+$$T(X,Y,Z), T(X^{(1)},Y,Z),\dots,T(X^{(m)},Y,Z)$$
+test statistics, as well.
+
+The p-value under the null hypothesis is then obtained as
+$$ p= 1+\frac{\sum_{j=1}^m \mathbb{1} \{T(X^{(j)},Y,Z) \geq T(X,Y,Z) \}  }{1+m}$$
+
+Let $S_n$ denote the set of all permutations on the indices $\{1,\dots,n\}$ and $X_\pi = (x_{\pi_1}, \dots, x_{\pi_n})$ the vector $X$ with its elements reordered according to the permutation $\pi \in S_i$.
+In the CPT procedure, the permutation-based copies of $X$ are consist of $x_i^{(j)} = x_{\pi^{(j)}}$ which are drawn so that 
+so that:
+
+\begin{equation}
+    \mathbb{P}(\pi^{(j)} = \pi | X,Y,Z) = \frac{q^n(X_\pi | Z)}{\sum_{\pi' \in S_n} q^n(X_{\pi'} | Z)}
+    \label{eq-pperm}
+\end{equation}
+
+that is, according to the $q^n(\cdot|Z) := q(\cdot | z_1, \dots q(\cdot|z_n)$ product density corresponding of the conditional distribution $Q(\cdot|z)$. Note that Eq. \ref{eq-pperm} does not necessarily assume a continuous distribution.
+For a verification of the valid type I error control of this approach refer to Theorem 1 in \citep{berrett2020conditional}.
+
+While the required permutations could be theoretically sampled with a simple Metropolis-Hastings algorithm that draws uniformly from $S_n$, at random, the acceptance ratio will be extremely low, even for moderate $n$ (except there is very low dependence of X on Z), resulting in slow mixing times. \cite{berrett2020conditional} (Algorithm 1) propose a parallelized pairwise Markov-Chain Monte Carlo sampler for CPT, that draws disjoint pairs in parallel and decides whether or not to swap them randomly, according to the odds ratio calculated from the conditional densities belonging to the original and swapped data. In their Theorem 2, \cite{berrett2020conditional} verify that the resulting Markov Chain yields the desired stationary distribution, even if the number of steps is small.
+
+\subsection{Conditional Permutation-based confounder-bias test}
+
+% fig:schematic
 \begin{figure}
   \centering
-  \resizebox{\columnwidth/2}{!}{%
-    \begin{tikzpicture}[>=latex',line join=bevel,]
-    %%
-    \node[scale=2] (c) at (32.497bp,18.0bp) [draw,circle, minimum width=20pt] {$C$};
-      \node[scale=2] (y) at (196.34bp,53.0bp) [draw,circle, minimum width=20pt] {$Y$};
-      \node[scale=2] (yhat) at (367.83bp,18.0bp) [draw,circle, minimum width=20pt] {$\hat{Y}$};
-      \draw [] (c) ..controls (85.995bp,29.353bp) and (118.04bp,36.283bp)  .. (y);
-      \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-      \pgfsetstrokecolor{strokecol}
-      \draw (98.494bp,45bp) node[scale=1.5] {$T(Y,C)$};
-      \draw [dashed] (c) ..controls (84.285bp,13.611bp) and (109.55bp,11.797bp)  .. (131.99bp,11.0bp) .. controls (189.15bp,8.9715bp) and (203.52bp,9.1172bp)  .. (260.68bp,11.0bp) .. controls (280.99bp,11.669bp) and (303.44bp,13.055bp)  .. (yhat);
-      \draw (196.34bp,18.5bp) node[scale=1.5] {$T(\hat{Y},C)$};
-      \draw [] (y) ..controls (273.69bp,37.233bp) and (303.37bp,31.105bp)  .. (yhat);
-      \draw (291.18bp,47bp) node[scale=1.5] {$T(Y,\hat{Y})$};
-    %
-    \end{tikzpicture}
+  \resizebox{\columnwidth}{!}{%
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Shape: Circle [id:dp12907748114570317] 
+\draw   (299.5,107) .. controls (299.5,93.19) and (310.69,82) .. (324.5,82) .. controls (338.31,82) and (349.5,93.19) .. (349.5,107) .. controls (349.5,120.81) and (338.31,132) .. (324.5,132) .. controls (310.69,132) and (299.5,120.81) .. (299.5,107) -- cycle ;
+%Shape: Circle [id:dp12318976880062338] 
+\draw   (397,39) .. controls (397,25.19) and (408.19,14) .. (422,14) .. controls (435.81,14) and (447,25.19) .. (447,39) .. controls (447,52.81) and (435.81,64) .. (422,64) .. controls (408.19,64) and (397,52.81) .. (397,39) -- cycle ;
+%Shape: Circle [id:dp2655574667622329] 
+\draw   (202,39) .. controls (202,25.19) and (213.19,14) .. (227,14) .. controls (240.81,14) and (252,25.19) .. (252,39) .. controls (252,52.81) and (240.81,64) .. (227,64) .. controls (213.19,64) and (202,52.81) .. (202,39) -- cycle ;
+%Curve Lines [id:da9340239406716428] 
+\draw    (250,28) .. controls (292,20) and (364,22) .. (400,28) ;
+%Curve Lines [id:da6958426380393512] 
+\draw    (239,61) .. controls (249,76) and (276,99) .. (299.5,107) ;
+%Curve Lines [id:da8565840155201192] 
+\draw    (349.5,107) .. controls (365,101) and (403,71) .. (410,60) ;
+
+%Shape: Circle [id:dp9753164043561875] 
+\draw   (475.5,257) .. controls (475.5,243.19) and (486.69,232) .. (500.5,232) .. controls (514.31,232) and (525.5,243.19) .. (525.5,257) .. controls (525.5,270.81) and (514.31,282) .. (500.5,282) .. controls (486.69,282) and (475.5,270.81) .. (475.5,257) -- cycle ;
+%Shape: Circle [id:dp6395662810469516] 
+\draw   (573,189) .. controls (573,175.19) and (584.19,164) .. (598,164) .. controls (611.81,164) and (623,175.19) .. (623,189) .. controls (623,202.81) and (611.81,214) .. (598,214) .. controls (584.19,214) and (573,202.81) .. (573,189) -- cycle ;
+%Shape: Circle [id:dp786541411329625] 
+\draw   (378,189) .. controls (378,175.19) and (389.19,164) .. (403,164) .. controls (416.81,164) and (428,175.19) .. (428,189) .. controls (428,202.81) and (416.81,214) .. (403,214) .. controls (389.19,214) and (378,202.81) .. (378,189) -- cycle ;
+%Curve Lines [id:da22693900064180195] 
+\draw    (426,178) .. controls (468,170) and (540,172) .. (576,178) ;
+%Curve Lines [id:da6720989194231959] 
+\draw    (415,211) .. controls (425,226) and (452,249) .. (475.5,257) ;
+%Curve Lines [id:da8140666812849395] 
+\draw    (525.5,257) .. controls (541,251) and (579,221) .. (586,210) ;
+%Shape: Circle [id:dp471386481785639] 
+\draw   (50,256) .. controls (50,242.19) and (61.19,231) .. (75,231) .. controls (88.81,231) and (100,242.19) .. (100,256) .. controls (100,269.81) and (88.81,281) .. (75,281) .. controls (61.19,281) and (50,269.81) .. (50,256) -- cycle ;
+%Shape: Rectangle [id:dp8617145222488287] 
+\draw   (156,237) -- (240,237) -- (240,277) -- (156,277) -- cycle ;
+%Shape: Circle [id:dp8776576784951928] 
+\draw   (290,256) .. controls (290,242.19) and (301.19,231) .. (315,231) .. controls (328.81,231) and (340,242.19) .. (340,256) .. controls (340,269.81) and (328.81,281) .. (315,281) .. controls (301.19,281) and (290,269.81) .. (290,256) -- cycle ;
+%Shape: Circle [id:dp2868603849402189] 
+\draw   (174,190) .. controls (174,176.19) and (185.19,165) .. (199,165) .. controls (212.81,165) and (224,176.19) .. (224,190) .. controls (224,203.81) and (212.81,215) .. (199,215) .. controls (185.19,215) and (174,203.81) .. (174,190) -- cycle ;
+%Callout Right Arrow [id:dp26184503306970397] 
+\draw   (46.55,225.27) -- (106,225.27) -- (106,250) -- (133,250) -- (133,241) -- (155.55,255.27) -- (133,269.55) -- (133,260.55) -- (106,260.55) -- (106,285.27) -- (46.55,285.27) -- cycle ;
+%Right Arrow [id:dp7986276189609152] 
+\draw   (240,250) -- (268,250) -- (268,241) -- (290,255.5) -- (268,270) -- (268,261) -- (240,261) -- cycle ;
+%Shape: Circle [id:dp9535423837564185] 
+\draw   (50,190) .. controls (50,176.19) and (61.19,165) .. (75,165) .. controls (88.81,165) and (100,176.19) .. (100,190) .. controls (100,203.81) and (88.81,215) .. (75,215) .. controls (61.19,215) and (50,203.81) .. (50,190) -- cycle ;
+%Straight Lines [id:da6172567079022628] 
+\draw    (75,215) -- (75,231) ;
+%Straight Lines [id:da8731068989736062] 
+\draw    (198,238) -- (198,215) ;
+
+% Text Node
+\draw (165,251) node [anchor=north west][inner sep=0.75pt]   [align=left] {ML model};
+% Text Node
+\draw (9,6) node [anchor=north west][inner sep=0.75pt]   [align=left] {\textbf{A}};
+% Text Node
+\draw (9,146) node [anchor=north west][inner sep=0.75pt]   [align=left] {\textbf{B}};
+% Text Node
+\draw (494,252.4) node [anchor=north west][inner sep=0.75pt]    {$C$};
+% Text Node
+\draw (591.5,180.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{Y}$};
+% Text Node
+\draw (396,184.4) node [anchor=north west][inner sep=0.75pt]    {$Y$};
+% Text Node
+\draw (484,198) node [anchor=north west][inner sep=0.75pt]   [align=left] {CPT};
+% Text Node
+\draw (67,251.4) node [anchor=north west][inner sep=0.75pt]    {$X$};
+% Text Node
+\draw (308.5,247.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{Y}$};
+% Text Node
+\draw (191,185.4) node [anchor=north west][inner sep=0.75pt]    {$Y$};
+% Text Node
+\draw (318,102.4) node [anchor=north west][inner sep=0.75pt]    {$Z$};
+% Text Node
+\draw (415.5,34.4) node [anchor=north west][inner sep=0.75pt]    {$Y$};
+% Text Node
+\draw (219,34.4) node [anchor=north west][inner sep=0.75pt]    {$X$};
+% Text Node
+\draw (308,48) node [anchor=north west][inner sep=0.75pt]   [align=left] {CPT};
+% Text Node
+\draw (68,185.4) node [anchor=north west][inner sep=0.75pt]    {$C$};
+
+
+\end{tikzpicture}
+
     }
-  \caption{Schematic diagram of testing $\hat{y} \independent c | y$ (option 3. in Table \ref{tab:conditional-independence-cases}). $T$ is a test statistic of choice. The null hypothesis of $\hat{y} \independent c | y$ implies that $(\hat{Y}|C=c, Y=y) \deq (\hat{Y}|Y=y)$ or, equivalently $(C|\hat{Y}=\hat{y}, Y=y) \deq (C|Y=y)$.}
-  \label{fig:dummy-graph}
+  \caption{Schematic diagram of using CPT in a predictive modelling context. \\ \textbf{(A)} CPT was originally proposed to be used on the feature variable $X$, target variable $Y$ and confounders $Z$. \textbf{(B)} The proposed use of CPT in predictive modelling requires the model to be fitted first, to obtain the model's prediction $\hat{Y}$ on $Y$. CPT is then utilized on the triplet $(Y, \hat{Y}, Z)$, to test hypotheses $\hat{y} \independent c | y$ or $y \independent \hat{y} | c$.}
+  \label{fig:schematic}
 \end{figure}
 
+As many related papers, the work of \cite{berrett2020conditional} was formalized as a (semi-)supervised learning approach, where $X$ is the predictor(s) (features), $Y$ is the target variable and $Z$ is a potential confounder. In this setting, testing the null hypothesis $X \independent Y | Z$ aims to determine, whether $X$ affects $Y$, when controlling for $Z$.
+For instance, in genome-wide association studies, CPT can be used o determine whether a particular genetic variant $X$ affects a response $Y$ such as disease status or some other phenotype, even after controlling for the rest of the genome, encoded in $Z$.
+
+Here I consider a different setting, where supervised learning model is already fitted and we are focusing on model diagnostics, by testing the triplet $(Y,\hat{Y}, C)$, where $Y$ is the target variable, $\hat{Y}$ is the model's prediction for Y, an $C$ is the (possibly multivariate) confounder. In such a setting, we are interested in how much variance the fitted model captures from the confounder $C$ or, in other words, to what extent the model is biased by the confounder variable $C$ when predicting $Y$ with $\hat{Y}$. The conceptual difference between the original and the proposed application of CPT is depicted on Fig. \ref{fig:schematic}.
+
+Conditional independence testing and, specifically, the framework of conditional permutation testing allows investigating three different null hypotheses corresponding to the $(Y, \hat{y}, C)$ triplet, as listed in Table \ref{tab:conditional-independence-cases}. Testing the null hypothesis $Y \independent \hat{Y} | C$ (option 1) investigates whether the model predictions are likely explainable solely with the confounder, i.e. whether the model is exclusively confounder-driven. Testing $Y \independent C | \hat{Y}$ (option 2) aims the question whether the model captures all the variance in $C$ when predicting $Y$. Testing the null hypothesis $\hat{Y} \independent C | Y$ (option 3) examines, whether the dependence of the model output on the confounder can likely be explained by the confounder's dependence on the target variable, i.e. whether there is any confounder bias in the model.
+
+While option 3. is typically of interest when testing confounder bias of predictive models, option 1 might be also useful in diagnostics of predictive models, especially in the exploratory phase of model construction. Option 2 seems less appealing for model diagnostics and as detailed below, the proposed variety of the CPT framework does not allow forming a non-parametric method in this case.
+
+Obtaining a relatively accurate, independent estimate of $D(\cdot|Z)$ (of any shape) for CPT inference is important. Berrett and colleagues recommend to use a large independent sample to obtain the log-likelihood matrix of the conditional distribution $D(\cdot|Z)$, which might be often viable in semi-supervised learning settings where unlabelled data $(X, Z)$ are easier to obtain than labelled data $(X, Y, Z)$.
+Since in the proposed predictive modelling setting normality might be often a reasonable assumption for $Y$ and $C$ (but not for $\hat{Y}$), it is possible to fall back to Gaussian assumptions. Here I propose to fit a linear regression model:  $Y = \alpha + \beta Z + \epsilon$ with the assumption that the residual error follows a Gaussian distribution.
 
 
-\paragraph{The conditional permutation test for independence}
- 
-\subsection{Conditional Permutation-based confounder-bias test}
+
+According to the "no free lunch" theorem, certain assumptions about the joint distribution of $(Y,\hat{Y},C)$ have to be made, and the CPT method clarifies that
+
+% tab:conditional-independence-cases
+\renewcommand{\arraystretch}{2}
+\begin{table}[]
+\centering
+\begin{tabular}{l|rp{60mm}|c|>{\centering\arraybackslash}m{30mm}}
+ &  & H0  & assumption needed for: & no assumptions about the distribution of: \\
+\hline
+\textbf{1.} & $Y \independent \hat{Y} | C$ \quad  & model exclusively driven by confounder & $Q(\cdot|C)$ & $\hat{Y}$ or $Y$ \\
+%\hline
+\textbf{2.} & $Y \independent C | \hat{Y}$ \quad & model captures all variance in confounder & $Q(\cdot|\hat{Y})$ & $Y$ or $C$ \\
+%\hline
+\textbf{3.} & $\hat{Y} \independent C | Y$  \quad &  model does not capture more confound than what is present in the target & $Q(\cdot|Y)$ & $\hat{Y}$ or $C$ \\
+\end{tabular}
+\caption{\label{tab:conditional-independence-cases} Possibilities when testing conditional independence in potentially biased predictive models. \\The table lists the three possible null hypotheses (H0), and the variables where assumption about the joint/conditional distributions is required/not required.   ($Y$: prediction target, $\hat{Y}$: predictions, $C$: confounder variable) }
+\end{table}
+
+
+
+
 
 \subsection{Validation on simulated data}
 
 \subsection{Validation on neuroimaging data}
 
 \section{Results}
+
+'no free lunch' for predictive modelling
 
 \subsection{Simulations}
 
