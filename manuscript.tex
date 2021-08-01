@@ -9,6 +9,8 @@
 \usepackage{tikz}
 \usetikzlibrary{snakes,arrows,shapes}
 
+\usepackage{epsfig}
+
 \usepackage{caption} 
 \captionsetup[table]{skip=10pt}
 
@@ -298,22 +300,6 @@ While the required permutations could be theoretically sampled with a simple Met
   \label{fig:schematic}
 \end{figure}
 
-As many related papers, the work of \cite{berrett2020conditional} was formalized as a (semi-)supervised learning approach, where $X$ is the predictor(s) (features), $Y$ is the target variable and $Z$ is a potential confounder. In this setting, testing the null hypothesis $X \independent Y | Z$ aims to determine, whether $X$ affects $Y$, when controlling for $Z$.
-For instance, in genome-wide association studies, CPT can be used o determine whether a particular genetic variant $X$ affects a response $Y$ such as disease status or some other phenotype, even after controlling for the rest of the genome, encoded in $Z$.
-
-Here I consider a different setting, where supervised learning model is already fitted and we are focusing on model diagnostics, by testing the triplet $(Y,\hat{Y}, C)$, where $Y$ is the target variable, $\hat{Y}$ is the model's prediction for Y, an $C$ is the (possibly multivariate) confounder. In such a setting, we are interested in how much variance the fitted model captures from the confounder $C$ or, in other words, to what extent the model is biased by the confounder variable $C$ when predicting $Y$ with $\hat{Y}$. The conceptual difference between the original and the proposed application of CPT is depicted on Fig. \ref{fig:schematic}.
-
-Conditional independence testing and, specifically, the framework of conditional permutation testing allows investigating three different null hypotheses corresponding to the $(Y, \hat{y}, C)$ triplet, as listed in Table \ref{tab:conditional-independence-cases}. Testing the null hypothesis $Y \independent \hat{Y} | C$ (option 1) investigates whether the model predictions are likely explainable solely with the confounder, i.e. whether the model is exclusively confounder-driven. Testing $Y \independent C | \hat{Y}$ (option 2) aims the question whether the model captures all the variance in $C$ when predicting $Y$. Testing the null hypothesis $\hat{Y} \independent C | Y$ (option 3) examines, whether the dependence of the model output on the confounder can likely be explained by the confounder's dependence on the target variable, i.e. whether there is any confounder bias in the model.
-
-While option 3. is typically of interest when testing confounder bias of predictive models, option 1 might be also useful in diagnostics of predictive models, especially in the exploratory phase of model construction. Option 2 seems less appealing for model diagnostics and as detailed below, the proposed variety of the CPT framework does not allow forming a non-parametric method in this case.
-
-Obtaining a relatively accurate, independent estimate of $D(\cdot|Z)$ (of any shape) for CPT inference is important. Berrett and colleagues recommend to use a large independent sample to obtain the log-likelihood matrix of the conditional distribution $D(\cdot|Z)$, which might be often viable in semi-supervised learning settings where unlabelled data $(X, Z)$ are easier to obtain than labelled data $(X, Y, Z)$.
-Since in the proposed predictive modelling setting normality might be often a reasonable assumption for $Y$ and $C$ (but not for $\hat{Y}$), it is possible to fall back to Gaussian assumptions. Here I propose to fit a linear regression model:  $Y = \alpha + \beta Z + \epsilon$ with the assumption that the residual error follows a Gaussian distribution.
-
-
-
-According to the "no free lunch" theorem, certain assumptions about the joint distribution of $(Y,\hat{Y},C)$ have to be made, and the CPT method clarifies that
-
 % tab:conditional-independence-cases
 \renewcommand{\arraystretch}{2}
 \begin{table}[]
@@ -330,11 +316,78 @@ According to the "no free lunch" theorem, certain assumptions about the joint di
 \caption{\label{tab:conditional-independence-cases} Possibilities when testing conditional independence in potentially biased predictive models. \\The table lists the three possible null hypotheses (H0), and the variables where assumption about the joint/conditional distributions is required/not required.   ($Y$: prediction target, $\hat{Y}$: predictions, $C$: confounder variable) }
 \end{table}
 
+As many related papers, the work of \cite{berrett2020conditional} was formalized as a (semi-)supervised learning approach, where $X$ is the predictor(s) (features), $Y$ is the target variable and $Z$ is a potential confounder. In this setting, testing the null hypothesis $X \independent Y | Z$ aims to determine, whether $X$ affects $Y$, when controlling for $Z$.
+For instance, in genome-wide association studies, CPT can be used o determine whether a particular genetic variant $X$ affects a response $Y$ such as disease status or some other phenotype, even after controlling for the rest of the genome, encoded in $Z$.
+
+Here I consider a different setting, where supervised learning model is already fitted and we are focusing on model diagnostics, by testing the triplet $(Y,\hat{Y}, C)$, where $Y$ is the target variable, $\hat{Y}$ is the model's prediction for Y, an $C$ is the (possibly multivariate) confounder. In such a setting, we are interested in how much variance the fitted model captures from the confounder $C$ or, in other words, to what extent the model is biased by the confounder variable $C$ when predicting $Y$ with $\hat{Y}$. The conceptual difference between the original and the proposed application of CPT is depicted on Fig. \ref{fig:schematic}.
+
+Conditional independence testing and, specifically, the framework of conditional permutation testing allows investigating three different null hypotheses corresponding to the $(Y, \hat{y}, C)$ triplet, as listed in Table \ref{tab:conditional-independence-cases}. Testing the null hypothesis $Y \independent \hat{Y} | C$ (option 1) investigates whether the model predictions are likely explainable solely with the confounder, i.e. whether the model is exclusively confounder-driven. Testing $Y \independent C | \hat{Y}$ (option 2) aims the question whether the model captures all the variance in $C$ when predicting $Y$. Testing the null hypothesis $\hat{Y} \independent C | Y$ (option 3) examines, whether the dependence of the model output on the confounder can likely be explained by the confounder's dependence on the target variable, i.e. whether there is any confounder bias in the model.
+
+While option 3. is typically of interest when testing confounder bias of predictive models, option 1 might be also useful in diagnostics of predictive models, especially in the exploratory phase of model construction. Option 2 seems less appealing for model diagnostics and as detailed below, the proposed variety of the CPT framework does not allow forming a non-parametric method in this case.
+
+Obtaining a relatively accurate, independent estimate of $D(\cdot|Z)$ (of any shape) for CPT inference is important. Berrett and colleagues recommend to use a large independent sample to obtain the log-likelihood matrix of the conditional distribution $D(\cdot|Z)$, which might be often viable in semi-supervised learning settings where unlabelled data $(X, Z)$ are easier to obtain than labelled data $(X, Y, Z)$.
+Since in the proposed predictive modelling setting normality might be often a reasonable assumption for $Y$ and $C$ (but not for $\hat{Y}$), it is possible to fall back to Gaussian assumptions and thereby eliminate the need for a large, independent sample to estimate $D(\cdot|Z)$.
+
+Here I propose to fit a linear regression model (or in case of categorical X, a logistic regression model):
+
+\begin{equation}
+    \label{eq:linreg}
+    X = \alpha + \beta Z + \epsilon
+\end{equation}
+
+
+with the assumption that the residual error follows a Gaussian distribution and let $\mu = \alpha + \beta Z$ and $\sigma^2 = E(\epsilon^2)$. Then, for the conditional Normal distribution $ (X|Z=z) \sim \mathcal{N}\{\mu(z), \sigma^2(z)\}$ and the log-likelihood, that is to be used in Eq. \ref{eq-pperm}, can be computed as follows:
+
+$$ \mathcal{L}(X|Z) = -{X^2}^T * \frac{1}{2} \sigma^2 + X^T \frac{\mu}{\sigma^2}$$
+
+where $T$ means transposing row vectors to column vectors. 
+
+Applying this Gaussian likelihood estimation in the case predictive model diagnostics requires that the two variables in Eq. \ref{eq:linreg} are substituted with $Y$ and $C$, but not $\hat{Y}$, for which the Gaussian assumption of the proposed likelihood estimation might not hold.
+
+Therefore, from the three options for conditional independence-based null hypotheses, enumerated in Table \ref{tab:conditional-independence-cases}, this is possible for options 1 and 3, but not option 2, as the variable on which the independence is conditional must be always the predictor variable in Eq. \ref{eq:linreg}.
+
+For options 1 and 3, the proposed simple Gaussian conditional likelihood estimation allows for deploying CPT without a large, independent sample to estimate the conditional distribution. 
+
+---------------------------------
+
+
+Todo: test statistic: $R^2$
+
+The validity of the type I error control of CPT has been justified when using a true $D(\cdot|Z)$. While \cite{berrett2020conditional} gave bounds on the validity of the test given deviations from the true conditional distribution (which proved to be relatively tolerant against deviations from the true distribution), these bounds assume that the $D(\cdot|Z)$ has been estimated from an independent sample.
+
+To provide foundations for the use of the proposed method we perfromed simulations...
+
+
+-----------------------------
+
+% tab:substitution
+\renewcommand{\arraystretch}{2}
+\begin{table}[]
+\centering
+\begin{tabular}{rl|l|l|l}
+original & CPT & $X$ & $Y$ & $Z$ \\
+\hline
+%\hline
+option 1: & full confounder test & $Y$ & $\hat{Y}$ & $C$ \\
+%\hline
+option 3: & partial confounder test & $C$ & $\hat{Y}$ & $Y$ \\
+\end{tabular}
+\caption{\label{tab:substitution} Substitutions of the symbols describing the variables in the original formulation of the CPT method and its two possible applications in predictive modelling diagnostics. }
+\end{table}
 
 
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Validation on simulated data}
+
+Conditional permutation testing allows relaxing assumptions on $\hat{Y}$ (for both the partial and the full test) but - in line with the "no free lunch" theorem, requires knowing - or putting assumptions - on the joint distribution of the other two variables ($Y$ and $C$). 
+While \cite{berrett2020conditional} give a detailed analysis of the robustness of their CPT approach when estimating the conditional distribution with re-using the tested data and, also, against misspecifying the conditional distribution of interest in case non-linearity, here I extend their results by investigating the robustness of the method against the violation of normality (for both $(Y, C)$ and $\hat{Y}$) and give precise power estimates for various weights of the confounder and the target signals in $\hat{y}$, in the case of varying level of covariance between $Y$ and $C$.
+
+
+
+
 
 \subsection{Validation on neuroimaging data}
 
@@ -346,16 +399,17 @@ According to the "no free lunch" theorem, certain assumptions about the joint di
 
 \subsection{Neuroimaging data}
 
+\begin{figure}
+  \centering
+  %\fbox{\rule[-.5cm]{4cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
+  \includegraphics[width=0.75\paperwidth]{fig/fig_hcp.eps}
+  \caption{Sample figure caption.}
+  \label{fig:fig1}
+\end{figure}
+
 \section{Discussion}
 
 \section{Conclusion}
-
-%\begin{figure}
-%  \centering
-%  \fbox{\rule[-.5cm]{4cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-%  \caption{Sample figure caption.}
-%  \label{fig:fig1}
-%\end{figure}
 
 
 \bibliographystyle{apalike}  
