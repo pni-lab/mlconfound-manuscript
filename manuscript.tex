@@ -413,14 +413,14 @@ To ensure normality, fluid intelligence scores were non-linearly transformed to 
 Features (functional concavities across 100 group independent component analysis based regions) were either (i) considered in their raw form or were subject to confound mitigation approaches by (ii) feature regression \citep{rao2017predictive} or (iii) COMBAT \citep{johnson2007adjusting, fortin2018harmonization}.
 The feature mitigation strategies were separately applied for acquisition batch and age group as confounder variable.
 
-The total of 5 types of features (raw, regressing out acquisition batch, regressing out age group, COMBAT with acquisition batch, COMBAT with age group) were subsequently independently fed into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the individual fluid intelligence scores with a ridge-regression \citep{hoerl1970ridge}. The $\alpha$ parameter of the ridge was considered as a hyperparameter ($\alpha \in \{0.000001, 0.01, 0.1, 1, 10, 100, 1000000\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cvs and with mean squared error as optimization metric.
+The total of 5 types of features (raw, regressing out acquisition batch, regressing out age group, COMBAT with acquisition batch, COMBAT with age group) were subsequently independently fed into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the individual fluid intelligence scores with a ridge-regression \citep{hoerl1970ridge}. The $\alpha$ parameter of the ridge was considered as a hyperparameter ($\alpha \in \{0.000001, 0.01, 0.1, 1, 10, 100, 1000000\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cv-s and with mean squared error as optimization metric.
 
 Analysis code is available as jupyter notebook as part\footnote{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_hcp.ipynb} of the github repository of the 'mlconfound' package.
 
 
 \subsubsection*{ABIDE: testing motion- and center-bias in predictive models of autism spectrum disorder diagnosis}
 
-The proposed method is applied to provide evidence of motion-bias in diagnostic predictive models of autism spectrum disorder (ASD), trained on the Autism Brain Imaging Data Exchange (ABIDE) dataset \citep{di2014autism} (866 participants, ASD: 402, healthy control: 464). Preprocessed regional timeseries data was obtained as shared with the paper \citep{dadi2019benchmarking} which was based on preprocessed image data provided by the Preprocessed Connectome Project \citep{craddock2013neuro}.
+The proposed method is applied to provide evidence of motion-bias in diagnostic predictive models of autism spectrum disorder (ASD), trained on the Autism Brain Imaging Data Exchange (ABIDE) dataset \citep{di2014autism} involving 866 participants; ASD: 402, healthy control (HC): 464. Preprocessed regional timeseries data was obtained as shared with the paper \citep{dadi2019benchmarking} which was based on preprocessed image data provided by the Preprocessed Connectome Project \citep{craddock2013neuro}.
 
 Tangent correlation across the timeseries of the n=122 regions of the BASC \citep{bellec2010multi} atlas) was computed with nilearn\footnote{http://nilearn.github.io/} \citep{huntenburg2017loading, esteve2015big}. 
 
@@ -430,9 +430,9 @@ Mean FD was non-linearly transformed to normal distribution with the quantile tr
 
 As COMBAT is not able to handle continuous variables (since it was primarily designed to remove "batch-effects"), motion was binned into 10 groups, based on equdistant data quantiles ranging from 0 to 1.
 
-The total of 5 types (raw, feature regression of site, feature regression of motion, COMBAT with site, COMBAT with motion) of features were subsequently independently fed into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the individual fluid intelligence scores with a ridge-regression \citep{hoerl1970ridge}. The $\alpha$ parameter of the ridge was considered as a hyperparameter ($\alpha \in \{0.000001, 0.01, 0.1, 1, 10, 100, 1000000\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cvs and with mean squared error as optimization metric.
+The total of 5 types (raw, feature regression of site, feature regression of motion, COMBAT with site, COMBAT with motion) of features were subsequently independently fed into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the diagnosis (DX: ASD vs. HC) with a L2-regularized logistic regression (as e.g. in \citep{dadi2019benchmarking}). The $C$ parameter of the model was considered as a hyperparameter ($C \in \{0.000001, 0.01, 0.1, 1, 10, 100, 1000000\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cv-s and with mean squared error as optimization metric.
 
-Analysis code is available as jupyter notebook as part\footnote{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_abide.ipynb} of the github repository of the 'mlconfound' package.
+Analysis code is available as jupyter notebook\footnote{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_abide.ipynb} in the github repository of the 'mlconfound' package.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
@@ -521,7 +521,33 @@ The full confounder test was highly significant ($p<0.0001$) for all models, ind
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
 
-Applying predictive modelling and machine learning on functional neuroimaging data holds a great potential for both revolutionizing our understanding of the physical basis of mind and delivering clinically useful tools \citep{woo2017building, wager2013fmri, spisak2020pain}. However, the presence of confounders typical for biomedical research (e.g. demographics) and specific to the data acquisition and processing approach (e.g. imaging artifacts) present a great challenge to these efforts.
+Confounder-bias can significantly harm the generalizability and biomedical validity of predictive models. Testing confoudner-bias of predictive models can be achieved by considering the "confounder-problem" as assessing \emph{conditional independence} between the predicted values and either the target or the confoudner variable. These two scenarios result in two different test, testing whether the model is partially or fully driven by the given confounder.
+Importantly, in predictive modelling, the model predictions are often follow a non-normal distribution, thus the any test for confounder bias must be, at least partly, non-parametric.
+However, as shown by in \citet{shah2020hardness} their the 'no free lunch' theorem, it is effectively impossible to establishing a fully non-parametric conditional independence test with a valid type I error control and non-trivial power.
+Here I propose the use of the Markov-chain Monte-Carlo based conditional permutation test (CPT) of \cite{berrett2020conditional} to test confoudner bias in predictive models. Adapting this approach for the confoudner testing problem makes it possible to place assumptions about the joint distribution of only two out of the three variables involved; that is, it allows constructing both the partial and full confoudner tests so that no assumption is made about the distribution of the model output. 
+Here I propose a computationally effective parallel implementation of CPT that utilizes the parallel pairwise sampler of \cite{berrett2020conditional}, coefficient of determination ($R^2$ or pseudo $R^2$ in case of categorical confoudner or classification) as a test statistic and assumes that the conditional distribution between the target variable and the confoudner is normal. The implementation provides a test that can be uniformly applied for any predictive model, given that realistic (e.g. cross-validated) model predictions can be obtained.
+
+The validity and the power of the tests has been investigated in simulations with normally distributed data and with various degrees of non-normality.
+
+The simulations have confirmed that the proposed implementation provides a valid type I error control for both the full and the partial confound test and revealed that both the tests have a high power for various configurations of the association between the target and the confounder, predictive performance, sample size and the confound-to-signal for the partial or signal-to-confound ratios for the full test. 
+Both tests become somewhat conservative (i.e. lower than expected type I error rates ) in the case of very powerful predictive models (when the $R^2$ between the predicted and observed values is greater than 0.7). However, the power of the test remains high with sufficiently large ($\ge 500$) sample sizes.
+
+Considering the partial test, if we apply \citeauthor{cohen2013statistical}'s terminology for the effect size of the confoudner bias, sample sizes around 500-1000 can robustly identify a very weak confounder bias (e.g a confoudner explaining 1-2\% of the variance in the prediction). A currently somewhat more common sample size of 100 will very likely identify medium sized confoudner-biases (around 9\%). Strong biases  (>25\%) can be very robustly detected with sample sizes as low as 50. 
+
+As expected, the power of the full confoudner test is very similar to the partial test, when investigating the contribution of the target to the prediction, instead of the confounder.
+
+While different biomedical applications might consider different amounts of bias to be relevant, an a-priory power calculation can help identifying the necessary sample size in order to exclude the possibility of a relevant confoudner bias with a high probability.
+
+Importantly, the simulations strongly suggest that both tests are very robust to the violation of the normality assumption for the conditional distribution between the target and the confoudner. Type I error is well controlled even in case of highly skewed and heavy tailed distributions (kurtosis > 5, skewness > 2) and gets significantly inflated only with extremely degenerate distributions (see the purple distribution on Fig. \ref{fig:sim-non-normal}). Due to the conservatives of the tests in case of very accurate models, even this extremely skewed and heavy tailed distribution resulted in lower than the nominal type I error rates if the predictions were strongly associated to the target variable.
+
+Non-normality has a negative effect on the power of the both tests, however, the decrease in power is in many simulation cases negligible and gets only relevant if the sample size and/or the confounder-effect is low.
+
+Given the power and the robustness of the proposed tests, they might become a useful tool in diagnosing predictive models, not exclusively in the biomedical filed. Among the many potential areas of applications, the tests could be certainly useful in translational neuroscience. Applying predictive modelling and machine learning on, for instance, functional neuroimaging data holds a great potential for both revolutionizing our understanding of the physical basis of mind and delivering clinically useful tools \citep{woo2017building, wager2013fmri, spisak2020pain}. However, the presence of confounders typical for biomedical research (e.g. demographics) and specific to the data acquisition and processing approach (e.g. imaging artifacts) present a great challenge to these efforts.
+To demonstrate the usefulness of the proposed tests, they have been deployed in two research settings where specific types of confounder-bias have previously been described. 
+First, functional connectivity data from the Human Connectome Project (HCP) \citep{van2013wu} was used to build models of 
+
+
+
 
 
 - conservativeness -> tolerance to non-normality
