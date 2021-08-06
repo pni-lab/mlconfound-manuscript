@@ -413,7 +413,7 @@ To ensure normality, fluid intelligence scores were non-linearly transformed to 
 Features (functional concavities across 100 group independent component analysis based regions) were either (i) considered in their raw form or were subject to confound mitigation approaches by (ii) feature regression \citep{rao2017predictive} or (iii) COMBAT \citep{johnson2007adjusting, fortin2018harmonization}.
 The feature mitigation strategies were separately applied for acquisition batch and age group as confounder variable.
 
-The total of 5 types of features (raw, regressing out acquisition batch, regressing out age group, COMBAT with acquisition batch, COMBAT with age group) were subsequently independently fed into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the individual fluid intelligence scores with a ridge-regression \citep{hoerl1970ridge}. The $\alpha$ parameter of the ridge was considered as a hyperparameter ($\alpha \in \{0.000001, 0.01, 0.1, 1, 10, 100, 1000000\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cv-s and with mean squared error as optimization metric.
+The total of 5 types of features (raw, regressing out acquisition batch, regressing out age group, COMBAT with acquisition batch, COMBAT with age group) were independently incorporated into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the individual fluid intelligence scores with a ridge-regression \citep{hoerl1970ridge}. The $\alpha$ parameter of the ridge was considered as a hyperparameter ($\alpha \in \{0.000001, 0.01, 0.1, 1, 10, 100, 1000000\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cv-s and with mean squared error as optimization metric. Confound mitigation was performed inside of the outer cross-validation loop, to avoid leakage.
 
 Analysis code is available as jupyter notebook as part\footnote{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_hcp.ipynb} of the github repository of the 'mlconfound' package.
 
@@ -430,7 +430,7 @@ Mean FD was non-linearly transformed to normal distribution with the quantile tr
 
 As COMBAT is not able to handle continuous variables (since it was primarily designed to remove "batch-effects"), motion was binned into 10 groups, based on equdistant data quantiles ranging from 0 to 1.
 
-The total of 5 types (raw, feature regression of site, feature regression of motion, COMBAT with site, COMBAT with motion) of features were subsequently independently fed into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the diagnosis (DX: ASD vs. HC) with a L2-regularized logistic regression (as e.g. in \citep{dadi2019benchmarking}). The $C$ parameter of the model was considered as a hyperparameter ($C \in \{0.000001, 0.01, 0.1, 1, 10, 100, 1000000\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cv-s and with mean squared error as optimization metric.
+The total of 5 types (raw, feature regression of site, feature regression of motion, COMBAT with site, COMBAT with motion) of features were independently incorporated into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the diagnosis (DX: ASD vs. HC) with a L2-regularized logistic regression (as e.g. in \citep{dadi2019benchmarking}). The $C$ parameter of the model was considered as a hyperparameter ($C \in \{0.1, 1, 10\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cv-s and with mean squared error as optimization metric. Confound mitigation was performed inside of the outer cross-validation loop, to avoid leakage.
 
 Analysis code is available as jupyter notebook\footnote{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_abide.ipynb} in the github repository of the 'mlconfound' package.
 
@@ -518,6 +518,34 @@ Both feature regression and COMBAT slightly improved the predictive performance 
 
 The full confounder test was highly significant ($p<0.0001$) for all models, indicating that neither of the models were exclusively driven by the confounds.
 
+% tab:unconditional-pvals
+\renewcommand{\arraystretch}{1.2}
+\begin{table}
+\centering
+\begin{tabular}{lll|ll|ll|ll|ll} 
+dataset & conf. & method & $R^2_{y, c}$ & $p_{y, c}$ & $R^2_{\hat{y}, c}$ & $p_{\hat{y}, c}$ & $R^2_{\hat{y}, y}$ & $p_{\hat{y}, y}$ & partial test & full test  \\
+\hline
+HCP & acq.  & raw      & 0.032 & <0.001 & 0.084 & <0.001  & 0.082 & <0.001 & <0.001 & <0.001 \\
+    &              & f.reg.    & & &0.003 & 0.99 & 0.066  & <0.001  & 0.99 & <0.001 \\
+    &              & COMBAT    & & &0.008 & 0.75 & 0.075  & <0.001  & 0.88 & <0.001\\
+\hline
+    & age   & raw       & 0.011 & 0.001  & 0.041 & <0.001  & 0.082  & <0.001 & <0.001 & <0.001 \\
+    &       & f.reg.    & & &0.001 & 0.3 & 0.07  & <0.001  & 0.5 & <    0.001 \\
+    &       & COMBAT    & & &0.004 & 0.055 & 0.076 & <0.001 & 0.12 & <0.001 \\
+\hline
+ABIDE   & center   & raw       & 0.005  & 0.203 &  0.169 & <0.001& 0.126     & <0.001 & <0.001 & <0.001 \\
+        &          & f.reg.    &  & &  0.042 & 0.007 & 0.173     & <0.001 & 0.21 & <0.001 \\
+        &          & COMBAT    &  & &  0.05 & 0.001 & 0.17     & <0.001 & 0.14 & <0.001 \\
+\hline
+        & motion   & raw       & 0.028 & <0.001 & 0.011    &  <0.001 & 0.126    & <0.001 & <0.001& <0.001 \\
+        &          & f.reg.    & & & 0.359    & <0.001  & 0.02   & <0.001 & <0.001 & 0.34 \\
+        &          & COMBAT    & & &  0.002 & 0.202 & 0.111     & <0.001 & 0.54 & <0.001 \\
+    
+
+\end{tabular}
+\caption{\label{tab:unconditional-pvals} Unconditioned coefficients-of-determination and p-values for all investigated models.}
+\end{table}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
 
@@ -563,23 +591,25 @@ The detected confounder bias is most probably of practical relevance for all fou
 
 In case of the HCP dataset, the weak, but statistically significant association between age and IQ predictions could likely exaggerate to a serious bias when testing the model on data of participants outside of the age range of the training sample (that is, the bias could likely significantly harm out-of-sample generalizability). The bias of the model for the acquisition batch (phase of the study the acquisition belongs to) can also be problematic and - to my best knowledge - it was not yet reported in the HCP dataset. There can be manifold reasons for the observed associations. Fluid intelligence of the participants can be affected by a change of selection bias during requirement (e.g. as the human connectome project got more public interest during its course the the sociodemographic and educational characteristics of the volunteer sample might have changed). The model can utilise changing characteristics of the data (e.g. gradual changes in the calibration settings of the measuring equipment or the changing level of experience/motivation of the research staff) to predict this part of the effect. This is obviously undesirable for any brain-based predictive model of fluid intelligence.
 
-In the ABIDE dataset, neither the medium-strong center-bias nor the age-bias is surprising but both are obviously undesired for a diagnostic model of autism. For instance the model trained on the raw features - depending on the calibration of the predicted class probabilities - might classify all participants form e.g. the CMU (Carnegie Mellon University) center as neurotypical control participants. It's easy to see that this bias can possibly lead to a very low predictive performance on out-of-center data. Similarly, a model biased by motion - next to having questionable neuroscientific validity - might fail systematically in populations with higher motion or altered motor characteristics (as known for ADHD).
+In the ABIDE dataset, neither the medium-strong center-bias nor the age-bias is surprising but both are obviously undesired for a diagnostic model of autism. For instance the model trained on the raw features - depending on the calibration of the predicted class probabilities - might classify all participants form e.g. the CMU (Carnegie Mellon University) center as neurotypical control participants. It's easy to see that this bias can possibly lead to a very low predictive performance on out-of-center data. Similarly, a model biased by motion - next to having questionable neuroscientific validity - might systematically fail in populations with higher motion or altered motor characteristics (as known e.g. for ADHD \cite{eloyan2012automated}).
 
+The investigated confound regression techniques, feature regression  \citep{spisak2014voxel, dukart2011age, abdulkadir2014reduction, rao2017predictive} and COMBAT \citep{johnson2007adjusting}, did not fully eliminate the association (unconditional dependence) between the confoudner and the predictions (neither for the HCP nor for the ABIDE dataset, all the corresponding p-values were smaller or equal than 0.003). However, as discussed above, fully eliminating this association is not necessarily a requirement for a model without confounder-bias. Indeed, the partial confoudner test revealed that except one, all models become likely free of confounder bias or - more precisely - the bias was suppressed to such an extent that the test was not able to detect it anymore. Given the high power of the test at these sample sizes (N=999 and 866 for the HCP and the ABIDE datasets, respectively), any confoudner remaining, but not detectable confounder bias is most probably negligible or is not of practical relevance.
+The exception, where confound mitigation did not successfully eliminate confoudner-bias, is confoudner regression of motion in the ABIDE dataset. Interestingly, in this case, the association between the confoudner and the predictions become stronger but with an opposite sign, while the prediction performance significantly dropped. COMBAT, on the other hand still effectively mitigated confound-bias in this case, although with a slight decrease of predictive performance, as well. A possible explanation to these phenomena is that in scanner motion is not simply a confounder but, as previously described \citep{fournier2010motor, anzulewicz2016toward}, it might have a complex relationship to ASD. Therefore, regressing out motion estimates from the connectivity features might eliminate significant amount of signal-of-interest, especially in functional connections that are associated with motor deficits in ASD. 
+In such cases, applying feature regression might be a too "aggressive" solution. As COMBAT was originally developed for harmonizing effects of categorical variables in the dataset (e.g. center or batch), our method of inputting the binned "motion groups" into COMBAT - together with the ability of the empirical Bayes method to incorporate information about sample variances - might have resulted in "less aggressive" data harmonization and preserved more signal-of-interest. 
+The behavior of existing confound elimination techniques in such situations and the applicability of COMBAT with numeric confiders is an interesting target of further research, where the proposed conditional permutation based confoudner tests can be deployed.
 
-
-At the same time, the full confoudner test confirmed that the model is not fully driven by the confoudner variable.
-
-
-
-- conservativeness -> tolerance to non-normality
-
-- discuss background of biases
-
-- COMBAT for numerical confounder?
+The full confoudner test - as expected - confirmed that none of the model is not fully driven by the confoudner variable or, in other words, the target and the prediction were not independent, given the confounders. While the full confoudner test might seem less useful in the presented examples, it might become useful in exploratory efforts, where the questions is simply if it is possible at all to train an unbiased predictive model.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 
+The lack of rigorous statistical tests of confoudner-bias significantly hampers the development of predictive models in many fields of research. Even tough several approaches for mitigating the effects of counfounder variables in machine learning have been recently proposed, these can potentially remove signal-of-interest together with the confoudner and an informed decision about confound mitigation strategy is impossible without a proper test of confounder-bias in the resulting model.
+
+To fill this critical gap in predictive model development, I propose two novel tests, the partial and the full confounder tests, which test the null hypotheses of 'no confounder-bias' of 'full confounder-bias', respectively. Both approaches are based on a recently proposed conditional permutation framework, with a mathematical justification of valid type I error control. The tests were constructed so that they do not place any assumption about the distribution of the model predictions, thereby being applicable with arbitrary machine learning algorithms.
+
+Given the high statistical power and the high robustness to the violation of the assumptions on the data (normality of the conditional distribution of the target and the confoudner variables), the tests can be useful in a wide variety of applications.
+
+As demonstrated on functional brain connectivity-based predictive models of fluid intelligence and autism, the tests can guide the optimization of confound mitigation and expected to improve the assessment of the robustness, generalizability and neurobiological validity of predictive models in biomedical research, thereby paving the way for the development of clinically useful machine learning biomarkers.
 
 \bibliographystyle{apalike}  
 \bibliography{references}
