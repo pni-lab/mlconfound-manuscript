@@ -35,13 +35,18 @@
 \maketitle
 
 \begin{abstract} % 150 words
-\lipsum[1]
-\emph{'mlconfound'}\footnote{https://github.com/pni-lab/mlconfound}
+The lack of rigorous non-parametric statistical tests of confoudner-effects significantly hampers the development of robust, valid ans generalizable predictive models in many fields of research.
+Here I propose the \emph{partial} and \emph{full confounder tests}, that build on a recent theoretical framework of conditional independence testing and test the null hypothesis of \emph{no bias} and \emph{fully biased model}, respectively.
+The proposed tests set no assumptions about the distribution of the predictive model output that is often non-normal.
+As shown by simulations, the test are statistically valid, robust and display a high statistical power.
+Applying the tests on models based on functional brain connectivity data from the Human Connectome Project and the Autism Brain Imaging Data Exchange databases shows that the proposed tests can significantly improve the assessment of the robustness, generalizability and neurobiological validity of predictive models and, thereby, foster the development of clinically useful machine learning biomarkers.
+
+The tests are implemented in the python package \emph{mlconfound}\footnote{https://github.com/pni-lab/mlconfound}.
 \end{abstract}
 
 
 % keywords can be removed
-\keywords{machine learning, predictive modelling, confounder, conditional independence test, conditional permutation test}
+\keywords{machine learning, predictive modelling, confounder test, conditional independence, conditional permutation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -76,31 +81,6 @@ Both tests require only on the target variable, the model predictions and the pu
 Additionally, a regression-based estimation of the conditional distribution of $c|y$ is proposed, which allows testing confounder bias without a-priory knowledge about the conditional distribution and without any assumptions on the distribution of the predicted values (which are often non-normal in practice).
 The validity of the type I error control and the statistical power of both tests are evaluated with simulated data (assuming non-normal model output).
 The proposed tests are then applied on functional brain connectivity data to provide evidence of motion-bias in a model trained on the Autism Brain Imaging Data Exchange (ABIDE) dataset \citep{di2014autism} and to evaluate the age dependence of fluid intelligence predictions on data from the Human Connectome Project.
-
-
-
-
-\begin{itemize}
-    \item growing interest in the use of
-supervised learning in biomedical contexts
-    \item confounder effects, site-effects
-    \item approaches to deal with confounders can
-    \item these approaches can eliminate signal-of-interest
-    \item need for an approach that can quantify the effect of a con- founding variable and assess the effectiveness of the possible counter- measures
-    \item parametric methods might fail (regularization)
-    \item current solutions:
-    \begin{itemize}
-        \item RP: invalid p-values, continuous only with binning, involves repeating whole model training
-        \item CI: no p-value, continuous only with binning, involves the whole model training
-    \end{itemize}
-    \item proposed method:
-    \begin{itemize}
-        \item based solely on the target, confounder and prediction
-        \item utilizes a mathematically established non-parametric framework for testing conditional independence of the confounder and the predictions, given the observed target
-        \item i.e. testing the null hypothesis that the prediction does not capture more confound than what is already present in the target variable
-        \item which is usually of primary interest when investigating confounder-bias of machine learning models.
-    \end{itemize}
-\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Methods}
@@ -534,16 +514,16 @@ HCP & acq.  & raw      & 0.032 & <0.001 & 0.084 & <0.001  & 0.082 & <0.001 & <0.
     &       & COMBAT    & & &0.004 & 0.055 & 0.076 & <0.001 & 0.12 & <0.001 \\
 \hline
 ABIDE   & center   & raw       & 0.005  & 0.203 &  0.169 & <0.001& 0.126     & <0.001 & <0.001 & <0.001 \\
-        &          & f.reg.    &  & &  0.042 & 0.007 & 0.173     & <0.001 & 0.21 & <0.001 \\
-        &          & COMBAT    &  & &  0.05 & 0.001 & 0.17     & <0.001 & 0.14 & <0.001 \\
+        &          & f.reg.    &  & &  0.042 & 0.007 & 0.173     & <0.001 & 0.04 & <0.001 \\
+        &          & COMBAT    &  & &  0.05 & 0.001 & 0.17     & <0.001 & 0.01 & <0.001 \\
 \hline
-        & motion   & raw       & 0.028 & <0.001 & 0.011    &  <0.001 & 0.126    & <0.001 & <0.001& <0.001 \\
-        &          & f.reg.    & & & 0.359    & <0.001  & 0.02   & <0.001 & <0.001 & 0.34 \\
-        &          & COMBAT    & & &  0.002 & 0.202 & 0.111     & <0.001 & 0.54 & <0.001 \\
+        & motion   & raw       & 0.028 & <0.001 & 0.111    &  <0.001 & 0.126    & <0.001 & <0.001& <0.001 \\
+        &          & f.reg.    & & & 0.359    & <0.001  & 0.02   & <0.001 & <0.001 & 0.09 \\
+        &          & COMBAT    & & &  0.002 & 0.202 & 0.111     & <0.001 & 0.64 & <0.001 \\
     
 
 \end{tabular}
-\caption{\label{tab:unconditional-pvals} Unconditioned coefficients-of-determination and p-values for all investigated models.}
+\caption{\label{tab:unconditional-pvals} Unconditioned coefficients-of-determination and the corresponding p-values and the p-values of the partial and full confounder tests for all investigated models.}
 \end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -571,6 +551,7 @@ Importantly, the simulations strongly suggest that both tests are very robust to
 Non-normality has a negative effect on the power of the both tests, however, the decrease in power is in many simulation cases negligible and gets only relevant if the sample size and/or the confounder-effect is low.
 
 Given the power and the robustness of the proposed tests, they might become a useful tool in diagnosing predictive models, not exclusively in the biomedical filed. 
+
 In such studies, confounder-bias has often been investigated (if investigated at all) by testing the association between the confoudner variable and the predictive values, see e.g. \citep{spisak2020pain}.
 However, the significance of this association does not necessarily imply a significant confound-bias of the model, especially if the confounder is also associated to the true target variable. In this case, namely, the model still might not be directly driven by the confounder, i.e. the dependence of the predictions on the confounder can be explained solely by the confoudner-target association. 
 Arguably, in certain applications, the researcher might aim to fully eliminate confoudner-related variance of the predictions and in this case testing the association (unconditional independence) between the confoudner and the predictions might be sufficient. However, a much more realistic aim is to construct models that allow a reasonable degree of confoudner-association of the predictions, but are likely not directly driven by confounder-information, i.e. the prediction-confoudner association is proportional to, and can likely be fully explained by, the target-confoudner association.
