@@ -35,13 +35,12 @@
 \maketitle
 
 \begin{abstract} % 150 words
-The lack of rigorous non-parametric statistical tests of confoudner-effects significantly hampers the development of robust, valid ans generalizable predictive models in many fields of research.
-Here I propose the \emph{partial} and \emph{full confounder tests}, that build on a recent theoretical framework of conditional independence testing and test the null hypothesis of \emph{no bias} and \emph{fully biased model}, respectively.
+The lack of rigorous non-parametric statistical tests of confoudner-effects significantly hampers the development of robust, valid and generalizable predictive models in many fields of research.
+Here I propose the \emph{partial} and \emph{full confounder tests}, that build on a recent theoretical framework for permutation-based conditional independence testing and probe the null hypotheses of \emph{unbiased} and \emph{fully biased model}, respectively.
 The proposed tests set no assumptions about the distribution of the predictive model output that is often non-normal.
-As shown by simulations, the test are statistically valid, robust and display a high statistical power.
-Applying the tests on models based on functional brain connectivity data from the Human Connectome Project and the Autism Brain Imaging Data Exchange databases shows that the proposed tests can significantly improve the assessment of the robustness, generalizability and neurobiological validity of predictive models and, thereby, foster the development of clinically useful machine learning biomarkers.
-
-The tests are implemented in the python package \emph{mlconfound}\footnote{https://github.com/pni-lab/mlconfound}.
+Simulations suggests that the tests are remarkably robust for the violation of the assumptions and display a high statistical power.
+Applying the proposed tests on models based on functional brain connectivity data from the Human Connectome Project and the Autism Brain Imaging Data Exchange databases reveals significant confoudner-biases. Some of these biases were previously unreported and hard to mitigate with state-of-the-art confound mitigation approaches.
+The package \emph{mlconfound}\footnote{\href{https://mlconfound.readthedocs.io}{https://mlconfound.readthedocs.io}} can aid the assessment of the generalizability and neurobiological validity of predictive models and, thereby, foster the development of clinically useful machine learning biomarkers.
 \end{abstract}
 
 
@@ -461,7 +460,7 @@ Violation of the normality assumptions for $Y$ and $C$ has a negative effect on 
 
 \begin{figure}[!b]
   \centering
-  \includegraphics[width=0.75\paperwidth]{fig/fig_hcp.eps}
+  \includegraphics[width=0.75\paperwidth]{fig/fig_hcp.pdf}
   \caption{\textbf{Acquisition- and age-bias of fluid IQ prediction in the HCP dataset.} \\
   Scatter plots and regression lines (with 95\% confidence intervals) show the association of the observed (horizontals axis) and predicted (vertical axis) fluid intelligence scores with various confound regression strategies. Color-coding of the confounder variables (top: acquisition batch, bottom: age group, as shown by the corresponding legends) reveals confounder-bias for both acquisition and age in the models trained on the raw data. This bias is robustly detected by the proposed 'partial' confounder test ($p<0.0001$) and seems to be effectively mitigated by both feature regression and COMBAT.
   Relation between the observed ($\hat{y}$) and predicted IQ scores and the confounder variables is shown by the graphs as $R^2 values$. Both confound mitigation techniques, but especially COMBAT, improves the predictive performance of the models.
@@ -481,7 +480,7 @@ The full confounder test was highly significant ($p<0.0001$) for all models, ind
 
 \begin{figure}[!b]
   \centering
-  \includegraphics[width=0.75\paperwidth]{fig/fig_abide.eps}
+  \includegraphics[width=0.75\paperwidth]{fig/fig_abide.pdf}
   \caption{\textbf{Center- and motion age-bias of ASD diagnosis prediction in the ABIDE dataset.} \\
   Boxplots and points show the predicted class probabilities (0: HC, 1: ASD), separately for the HC and ASD groups. In the top panel, predictions are plotted for each center separately and color indicates the true diagnosis (DX). AT the bottom plot, color indicates the normalized index of in-scanner motion (based on mean framewise displacement, mean FD). The proposed confounder test reveals significant center- and motion-bias in the model trained on the raw data (p<0.0001). While center bias seems to be effectively mitigated by feature regression, the same technique fails to remove motion-bias (actually introduces a paradoxical negative bias). COMBAT seems to effectively remove the effect of both confounders on the predictions and improves the predictive performance of the models in both cases.
   Relation between the observed ($\hat{y}$) and predicted IQ scores and the confounder variables is shown by the graphs as $R^2 values$. Solid red line between the confounder and the prediction means significant confounder bias, whereas blue dashed line denotes that confounder testing provided no evidence for bias. P-values are determined with the 'partial confound test'. P-values of the 'full' confound test were all less then 0.0001, i.e. confounder did not fully drive prediction for any of the models.
@@ -523,7 +522,7 @@ ABIDE   & center   & raw       & 0.005  & 0.203 &  0.169 & <0.001& 0.126     & <
     
 
 \end{tabular}
-\caption{\label{tab:unconditional-pvals} Unconditioned coefficients-of-determination and the corresponding p-values and the p-values of the partial and full confounder tests for all investigated models.}
+\caption{\label{tab:unconditional-pvals} Unconditioned coefficients-of-determination, the corresponding p-values and the p-values of the partial and full confounder tests for all investigated models.}
 \end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
