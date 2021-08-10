@@ -20,10 +20,7 @@ $$ p= \frac{\sum_{j=1}^m \mathbb{1} \{T(\y^{(j)}, \yhat, \c) \geq T(\y, \yhat, \
 Let $S_n$ denote the set of all permutations on the indices $\{1,\dots,n\}$ and $\y_\pi = (y_{\pi_1}, \dots, y_{\pi_n})$ the vector $\y$ with its elements reordered according to the permutation $\pi \in S_i$.
 The permutation-based copies of $\y$ are then of $\y^{(j)} = \y_{\pi^{(j)}}$ which are drawn so that:
 
-\begin{equation}
-    \mathbb{P}(\pi^{(j)} = \pi | \y,\yhat,\c) = \frac{q^n(\y_\pi | \c)}{\sum_{\pi' \in S_n} q^n(\y_{\pi'} | \c)}
-    \label{eq-pperm}
-\end{equation}
+    $$\mathbb{P}(\pi^{(j)} = \pi | \y,\yhat,\c) = \frac{q^n(\y_\pi | \c)}{\sum_{\pi' \in S_n} q^n(\y_{\pi'} | \c)}$$
 
 that is, according to the $q^n(\cdot|\c) := q(\cdot | c_1) \dots q(\cdot|c_n)$ product density corresponding to the conditional distribution $Q(\cdot|\c)$. Note that Eq. \ref{eq-pperm} does not necessarily assume a continuous distribution.
 For a verification of the valid type I error control of this approach refer to Theorem 1 in \citep{berrett2020conditional}.
