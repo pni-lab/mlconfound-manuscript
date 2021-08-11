@@ -87,27 +87,25 @@ The proposed tests are then applied on functional brain connectivity data to pro
 
 In a predictive modelling setting, let $\y$ denote the target variable, $\yhat$ denote model output, i.e. the predictions for $\y$ and let $\c$ denote a variable which is considered as a confounder (see Fig. \ref{fig:schematic}B). Let us assume, furthermore, that $\y$, $\yhat$ and $\c$ consist of independent and identically distributed (IID) data points $(y_i, \hat{y}_i, c_i)$ for $i=1, \dots , n$ so that $\y=(y_1, \dots ,y_n)$, $\yhat=(\hat{y}_1, \dots, \hat{y}_n)$ and $\c=(c_1, \dots, c_n)$. 
 
-Obviously, a strong association between $\yhat$ and $\c$ might indicate that the model is biased; it's predictions are driven by the confounder rather than information about the target variable.
-Testing unconditional independence between $\yhat$ and $\c$ (or any of the $\y$, $\yhat$, $\c$ variables) is, however, insufficient for the proper characterization of confounder-bias in predictive modelling.
-For instance, even if the null hypothesis $H0 : \yhat \independent \c$ is false, $\yhat$ might be only marginally dependent on $\c$, due to their dependence on $\y$. In other words, if the target variable $\y$ is associated to the confounder variable $\c$, a model that is completely blind to $\c$ (and, therefore, unbiased) might still provide outputs $\yhat$ that are significantly associated with $\c$.
+Depending on the research question, the direct influence of $\c$ on the model predictions $\yhat$ is subject to be kept at a negligible level or it is to be proven that, at least, the model is not completely driven by $\c$.
 
- Below, I summarize how testing conditional independence \citep{dawid1979conditional} with conditional permutation test \citep{berrett2020conditional} allows evaluating confounder-bias in predictive modelling, without placing assumptions on the distribution of the model output, where normality is often violated \citep{garcia2009study, kristensen2017whole}.
+Obviously, a strong association between $\yhat$ and $\c$ might indicate that the model is biased; it's predictions are driven by the confounder rather than information about the target variable.
+Testing unconditional independence ($\yhat \independent \c$) between $\yhat$ and $\c$ (or any of the $\y$, $\yhat$, $\c$ variables) is, however, insufficient for the proper characterization of confounder-bias in predictive modelling.
+For instance, even if $\yhat \independent \c$ is false, $\yhat$ might be only marginally dependent on $\c$, due to the dependence of both on $\y$. In other words, if the target variable $\y$ is significantly associated to the confounder variable $\c$, a model that is completely blind to $\c$ (and, therefore, unbiased) might still provide outputs $\yhat$ that are significantly associated with $\c$.
 
 \subsubsection*{Conditional independence for testing confounder bias}
 
-Depending on the research question, the influence of $\c$ on the model predictions $\yhat$ is subject to be kept at a negligible level or it is to be proven that, at least, the model is not completely driven by $\c$.
+Instead of focusing on the unconditional independence between the confoudner and the predictions, we shall consider the \emph{conditionally independence} between $\yhat$ and $\c$ given $\y$ (written as $\yhat \independent \c | \y$) which, according to \cite{dawid1979conditional}, implies that $\mathbb{P}(\yhat, \c|\y) = \mathbb{P}(\yhat|\y)\mathbb{P}(\c|\y)$. The test with this null hypothesis will be referred to as the \emph{partial confounder test}.
 
-Our primary interest is, therefore, the \emph{conditionally independence} between $\yhat$ and $\c$ given $\y$ (written as $\yhat \independent \c | \y$) which, according to \cite{dawid1979conditional}, implies that $\mathbb{P}(\yhat, \c|\y) = \mathbb{P}(\yhat|\y)\mathbb{P}(\c|\y)$. The test with this null hypothesis will be referred to as the \emph{partial confounder test}.
-
-Alternatively, one might be interested in testing $\yhat \independent \c | \y$. We will refer to the corresponding test as the \emph{full confounder test}.
+Alternatively, one might be also interested in testing $\yhat \independent \c | \y$. We will refer to the corresponding test as the \emph{full confounder test}.
 
  Conditional independence - in its general form - lies at the heart of several fundamental concepts in statistics and  plays an increasingly important role in various fields of applied statistics, particularly in biomedical applications \citep{spirtes2000causation, peters2016causal, fiedler2011mediation, candes2016panning}. Recently, \cite{shah2020hardness} have raised important concerns regarding conditional independence testing.
- Their "no free lunch" theorem implies that, without placing some assumptions on the joint distribution of $(\y, \yhat, \c)$, conditional Independence testing is effectively impossible. In other words, neither the full nor the partial confounder tests can be constructed so that - for all distributions - they provides a valid type I error control and, at the same time, a non-trivial statistical power.
+ Their "no free lunch" theorem implies that, without placing some assumptions on the joint distribution of $(\y, \yhat, \c)$, conditional independence testing is effectively impossible. In other words, neither the full nor the partial confounder tests can be constructed so that - for all distributions - they provides a valid type I error control and, at the same time, a non-trivial statistical power.
 
 This result is in strong contrast to unconditional independence testing - where permutation tests  \citep{pitman1937significance, fisher1942189}, provide a general, distribution-free solution - and it has important implications for confounder testing in predictive modelling where the distribution of the model outputs, depending on the applied machine learning model, is unknown and often heavily non-normal.
 
-Nevertheless, as shown by \cite{berrett2020conditional}, conditional independence testing is possible with information only about the conditional distribution of two out of the three variables.
-The conditional permutation test (CPT) of Berret and colleagues builds on the conditional randomization test of \cite{candes2016panning} and samples from a non-uniform distribution over the set of possible permutations $\pi$ of one of the variables, so that it incorporates available distributional information into permutation-based inference.
+Even if constructing totally non-parametric confoudner tests was proven to be impossible, as shown by \cite{berrett2020conditional} and \citep{candes2016panning}, valid and powerful conditional independence tests can be constructed with inputting information about the distribution of only two (out of the three) variables.
+Specifically, the conditional permutation test (CPT) of Berret and colleagues samples from a non-uniform distribution over the set of possible permutations $\pi$ of one of the variables, based on its conditional distribution of the other variable, thereby it incorporating available distributional information into permutation-based inference.
 
 % fig:schematic
 \begin{figure}
@@ -205,12 +203,12 @@ The conditional permutation test (CPT) of Berret and colleagues builds on the co
 \end{figure}
 
 
-As many related papers, the work of \cite{berrett2020conditional} was formalized as a (semi-)supervised learning approach, where $X$ is the predictor(s) (features), $Y$ is the target variable and $Z$ is a potential confounder. In this setting, testing the null hypothesis $X \independent Y | Z$ aims to determine, whether $X$ affects $Y$, when controlling for $Z$.
+As many related papers, the work of \cite{berrett2020conditional} was formalized as a (semi-)supervised learning approach, where $X$ is a set of predictors (features), $Y$ is the target variable and $Z$ is a potential confounder. In this setting, testing the null hypothesis $X \independent Y | Z$ aims to determine, whether the features $X$ still affect $Y$, when controlling for $Z$.
 For instance, in genome-wide association studies, CPT can be used to determine whether a particular genetic variant $X$ affects a response $Y$ such as disease status or some other phenotype, even after controlling for the rest of the genome, encoded in $Z$.
 
 In this paper, a different setting is considered, where the supervised learning model is already fitted and we are focusing on model diagnostics, by testing the triplet $(\y,\yhat, \c)$. The conceptual difference between the original and the proposed application of CPT is depicted on Fig. \ref{fig:schematic}.
 
-Within this setting, conditional independence testing and, specifically, the framework of conditional permutation testing allows investigating three different null hypotheses corresponding to the $(\y, \yhat, \c)$ triplet, as listed in Table \ref{tab:conditional-independence-cases}. Testing the null hypothesis $\y \independent \yhat | \c$ (option 1) investigates whether the model predictions are likely explainable solely with the confounder, i.e. whether the model is exclusively confounder-driven. Testing $\y \independent \c | \yhat$ (option 2) addresses the question whether the model captures all the variance in $c$ when predicting $y$. Testing the null hypothesis $\yhat \independent \c | \y$ (option 3) examines, whether the dependence of the model output on the confounder can likely be explained by the confounder's dependence on the target variable, i.e. whether there is any confounder bias in the model.
+Within this setting, conditional independence testing and, specifically, the framework of conditional permutation testing allows investigating three different null hypotheses corresponding to the $(\y, \yhat, \c)$ triplet, as listed in Table \ref{tab:conditional-independence-cases}. Testing the null hypothesis $\y \independent \yhat | \c$ (option 1, full confoudner testing) investigates whether the model predictions are likely explainable solely with the confounder, i.e. whether the model is exclusively confounder-driven. Testing $\y \independent \c | \yhat$ (option 2) addresses the question whether the model captures all the variance in $c$ when predicting $y$. Testing the null hypothesis $\yhat \independent \c | \y$ (option 3, partial confounder testing) examines, whether the dependence of the model output on the confounder can likely be explained by the confounder's dependence on the target variable, i.e. whether there is any confounder bias in the model.
 
 % tab:conditional-independence-cases
 \renewcommand{\arraystretch}{1.2}
@@ -228,44 +226,61 @@ Within this setting, conditional independence testing and, specifically, the fra
 \caption{\label{tab:conditional-independence-cases} Possibilities when testing conditional independence in potentially biased predictive models. \\The table lists the three possible null hypotheses (H0), and the variables where assumption about the joint/conditional distributions is required/not required.   ($y$: prediction target, $\yhat$: predictions, $\c$: confounder variable) }
 \end{table}
 
-Option 3, i.e. partial confounder testing is typically of interest when testing confounder bias of predictive models. Option 1, i.e. full confounder testing, might be also useful in diagnostics of predictive models, especially in the exploratory phase of model construction. Option 2 seems less appealing for model diagnostics and importantly, the CPT framework does not allow constructing a test which is non-parametric on $\yhat$.
+Option 3, i.e. partial confounder testing is typically of interest when testing confounder bias of predictive models. Option 1, i.e. full confounder testing, might be also useful in diagnostics of predictive models, especially in the exploratory phase of model construction. Option 2 seems less appealing for model diagnostics and importantly, in this case the CPT framework does not allow constructing a test which is non-parametric on $\yhat$.
 
 Below, CPT is adapted for partial confounder testing (option 3). The formulation of the full confounder test (option 1) is analogous and given in Supplementary Material \ref{sup:full-test}.
-
 \subsubsection*{The partial confounder test}
 
 The partial confounder test generates a null-distribution for an arbitrary predefined test statistic $T(\y,\yhat,\c)$ by sampling permutation based "copies" of $\c$,
 
-$$\c_i^{(j)} \sim Q(\cdot|y_i) \ $$
-
-where, $Q(.|y)$ denotes the conditional distribution of $\c$ given $\y=y$ and $j=1,\dots, m$ indexes the "copy" of $\c$ so that $\c^{(j)} = (c_1^{(j)}, \dots, c_n^{(j)})$ is a permutation of the original vector $\c = (c_1, \dots, c_n)$. 
-
-This mechanism creates copies $\c^{(1)}, \dots ,\c^{(m)}$ so that under the null hypothesis ($\yhat \independent \c | \y$), the triples $$(\y,\yhat,\c), (\y, \yhat, \c^{(1)}),\dots, (\y, \yhat, \c^{(m)})$$ are all identically distributed and exchangeable, and so are the 
-$$T(\y,\yhat,\c), T(\y, \yhat, \c^{(1)}),\dots,T(\y, \yhat, \c^{(m)})$$
-test statistics, as well.
-
-Let us denote the permutation-based copies of 
-
-$$\c^{(j)} = \c_{\pi^{(j)}}, \quad \pi \in S_n$$
-
-where $S_n$ denote the set of all permutations on the indices $\{1,\dots,n\}$ and $\c_\pi = (c_{\pi_1}, \dots, c_{\pi_n})$ the vector $\c$ with its elements reordered according to the permutation .
-
-In the partial confoudner test, the $\c_{\pi^{(j)}}$ copies are drawn so that:
-
 \begin{equation}
-    \mathbb{P}(\pi^{(j)} = \pi | \y,\yhat,\c) = \frac{q^n(\c_\pi | \y)}{\sum_{\pi' \in S_n} q^n(\c_{\pi'} | \y)}
-    \label{eq-pperm}
+    c_i^{(j)} \sim Q(\cdot|y_i)
+     \label{eq:cond-copy}
 \end{equation}
 
+where, $Q(.|y)$ denotes the conditional distribution of $\c$ given $\y=y$ and $j=1,\dots, m$ indexes the "copy" of $\c$ so that
+
+$$ \c^{(j)} = (c_1^{(j)}, \dots, c_n^{(j)}) = (c_{\pi_1^{(j)}}, \dots, c_{\pi_n^{(j)}}) =  \c_{\boldsymbol{\pi}^{(j)}} $$
+
+is a permutation of the original vector $\c = (c_1, \dots, c_n)$, with its elements reordered according to the permutation $\quad \boldsymbol{\pi} \in S_n$ where $S_n$ denote the set of all permutations on the indices $\{1,\dots,n\}$.
+
+To ensure that Eq. \ref{eq:cond-copy} holds, the $\c_{\boldsymbol{\pi}^{(j)}}$ copies must be drawn so that:
+
+\begin{equation}
+    \label{eq-pperm}
+    \mathbb{P}(\boldsymbol{ \pi }^{(j)} = \boldsymbol{ \pi } | \y,\yhat,\c) = \frac{q^n(\c_{\boldsymbol{ \pi }} | \y)}{\sum_{\boldsymbol{ \pi } ' \in S_n} q^n(\c_{\boldsymbol{ \pi } ' } | \y)}
+\end{equation}
+
+
 that is, according to the $q^n(\cdot|\y) := q(\cdot | y_1) \dots q(\cdot|y_n)$ product density corresponding to the conditional distribution $Q(\cdot|\y)$. Note that Eq. \ref{eq-pperm} does not necessarily assume a continuous distribution.
-For a verification of the valid type I error control of this approach refer to Theorem 1 in \citep{berrett2020conditional}.
+
+This mechanism creates copies $\c^{(1)}, \dots ,\c^{(m)}$ so that under the null hypothesis ($\yhat \independent \c | \y$), the triples 
+
+$$(\y,\yhat,\c), (\y, \yhat, \c^{(1)}),\dots, (\y, \yhat, \c^{(m)})$$
+
+are all identically distributed and exchangeable, and so are the 
+
+$$T(\y,\yhat,\c), T(\y, \yhat, \c^{(1)}),\dots,T(\y, \yhat, \c^{(m)})$$
+
+test statistics, as well.
 
 The p-value under the null hypothesis is then obtained as
 $$ p= \frac{\sum_{j=1}^m \mathbb{1} \{T(\y, \yhat, \c^{(j)}) \geq T(\y, \yhat, \c) \}  }{m}$$
 
-While the required permutations could be theoretically sampled with a simple Metropolis-Hastings algorithm that draws uniformly from $S_n$ at random, this way the acceptance ratio would be extremely low, even for moderate $n$ (except there is very low dependence of $\c$ on $\y$), resulting in slow mixing times. The partial confounder test can be, however, efficiently implemented with the parallelized pairwise Markov-Chain Monte Carlo sampler of \cite{berrett2020conditional} (Algorithm 1), that draws disjoint pairs in parallel and decides whether or not to swap them randomly, according to the odds ratio calculated from the conditional densities belonging to the original and swapped data. In their Theorem 2, \cite{berrett2020conditional} verify that the resulting Markov Chain yields the desired stationary distribution, even if the number of steps is small.
+For a verification of the valid type I error control of this approach refer to Theorem 1 in \citep{berrett2020conditional}.
 
-\subsubsection*{Conditional log-likelihood matrix}
+While the required permutations could be theoretically sampled with a simple Metropolis-Hastings algorithm that draws uniformly from $S_n$ at random, this way the acceptance ratio would be extremely low, even for moderate $n$ (except there is very low dependence of $\c$ on $\y$), resulting in slow mixing times. The partial confounder test can be, however, efficiently implemented with the parallelized pairwise Markov-Chain Monte Carlo sampler of \cite{berrett2020conditional} (Algorithm 1), that draws disjoint pairs in parallel and decides whether or not to swap them randomly, according to the odds ratio calculated from the conditional densities belonging to the original and swapped data. The acceptance odds ratio of swapping indices $i$ and $j$ is:
+
+\begin{equation}
+\frac{ q(c_j | y_i) q(c_i | y_j)}{q(c_i | y_i) q(c_j | y_j) }
+=
+log \mathcal{L}(c_j | y_i) + log \mathcal{L}(c_i | y_j) - log \mathcal{L}(c_i | y_i) - log \mathcal{L}(c_j | y_j) 
+\label{eq:accept-odds}
+\end{equation}
+
+In their Theorem 2, \cite{berrett2020conditional} verify that the resulting Markov Chain yields the desired stationary distribution, even if the number of steps is small.
+
+\subsubsection*{Gaussian conditional log-likelihood}
 
 
 Obtaining a relatively accurate, independent estimate of $D(\cdot|\y)$ (of any shape) for CPT inference is important. Berrett and colleagues recommend to use a large independent sample to obtain the log-likelihood matrix of the conditional distribution $D(\cdot|Z)$, which might be often viable in semi-supervised learning settings where unlabelled data $(X, Z)$ are easier to obtain than labelled data $(X, Y, Z)$.
@@ -279,13 +294,17 @@ In case of continuous target, a linear regression model  can be fitted:
 \end{equation}
 
 
-with the assumption that the residual error follows a Gaussian distribution. If we write $\boldsymbol{\mu} = \alpha + \beta \y$ and $\sigma^2 = E(\boldsymbol{e}^2)$ then, for the conditional Normal distribution $ (\c|\y=y_i) \sim \mathcal{N}\{\mu_i, \sigma^2\}$ and the log-likelihood, that is to be used in Eq. \ref{eq-pperm}, can be computed as follows:
+with the assumption that the residual error follows a Gaussian distribution. If we write $\boldsymbol{\mu} = \alpha + \beta \y$ and $\sigma$ is the standard deviation of the residual $\boldsymbol{e}$, then the conditional distribution of interest is given as $ (\c|\y=y_i) \sim \mathcal{N}\{\mu_i, \sigma^2\}$ and the log-likelihood, that is to be used in Eq. \ref{eq:accept-odds}, can be computed simply as the log of the corresponding probability density function:
 
-$$ log\mathcal{L}(\c|\y) = - \frac{n}{2} ln(2 \pi) -  \frac{n}{2} ln( \sigma^2) - \frac{1}{2 \sigma^2} \sum_{i=1}^n (c_i - \mu_i)^2 $$
+$$ log\mathcal{L}(c_i|y_j) = - \frac{1}{2} \Big(\frac{c_i-\mu_j}{\sigma}\Big)^2 - ln(2 \pi \sigma)   $$
+
 
 In the case of categorical target, a multinomial logistic regression model can be used to obtain $D(\cdot|\y)$.
 
-A straightforward choice of test statistic with the proposed Gaussian likelihood estimation is the coefficient of determination ($R^2$ or pseudo $R^2$ in case of categorical confounder or classification):
+Notably, from the three options for conditional independence-based null hypotheses enumerated in Table \ref{tab:conditional-independence-cases}, the proposed Gaussian likelihood estimation is possible for options 1 and 3, but not option 2, as the variable on which the independence is conditional must be always the predictor variable in Eq. \ref{eq:linreg}.
+For options 1 and 3, the proposed simple Gaussian conditional likelihood estimation allows for deploying CPT without a large, independent sample to estimate the conditional distribution. 
+
+While, in theory, any predefined test statistic $T$ can be used, for the proposed Gaussian likelihood estimation, the python package \emph{mlconfound} implements only the two-sided variant of the tests (as on-sided testing is out-of-interest in the confoudner problem) and uses the coefficient of determination ($R^2$ or pseudo $R^2$ in case of categorical confounder or classification) as a test statistic:
 
 $$T(\y, \yhat, \c) = R^2(\yhat, \c)$$ 
 
@@ -293,12 +312,7 @@ and
 
 $$T(\y, \yhat, \c^{(j)}) = R^2(\yhat, \c^{(j)})$$ 
 
-for any $\pi \in S_n$
-
-Notably, from the three options for conditional independence-based null hypotheses, enumerated in Table \ref{tab:conditional-independence-cases}, the proposed Gaussian likelihood estimation is possible for options 1 and 3, but not option 2, as the variable on which the independence is conditional must be always the predictor variable in Eq. \ref{eq:linreg}.
-
-For options 1 and 3, the proposed simple Gaussian conditional likelihood estimation allows for deploying CPT without a large, independent sample to estimate the conditional distribution. 
-
+for any $\pi \in S_n$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Validation on simulated data}
@@ -370,7 +384,7 @@ Analysis code used for simulations is available\footnote{https://github.com/pni-
 
 The usefulness of the proposed confounder tests is demonstrated by applying them for predictive classification and regression models based on functional brain connectivity data, with different confound-mitigation approaches. 
 
-'Partial' and 'full' confound testing was performed with default parameters (1000 permutations, 50 Markov-chain Monte Carlo steps) as implemented in version 0.9.0 of the package \emph{'mlconfound'}.
+'Partial' and 'full' confound testing was performed with default parameters (10000 permutations, 50 Markov-chain Monte Carlo steps) as implemented in version 0.9.0 of the package \emph{'mlconfound'}. Unconditional dependence across the involved variables was investigated with conventional permutation test on the $R^2$ values, with 1000 permutations. 
 
 \subsubsection*{HCP: testing age- and acquisition batch-bias in fluid intelligence prediction}
 
@@ -433,15 +447,16 @@ The conditional permutation based 'partial' and 'full' confound tests for predic
   \label{fig:sim-non-normal}
 \end{figure}
 
-Simulations based on normally distributed data justified that the proposed confounder tests - in line with theory - provide a valid type I error control (For detailed results, see first row and first column on Figure \ref{fig:sim-normal} for the 'partial' test on numerical data and Supplementary Figures \ref{fig:sim-ccc-full}, \ref{fig:sim-ccb-partial}, \ref{fig:sim-ccb-full}, \ref{fig:sim-bbc-partial}, \ref{fig:sim-bbc-full}, \ref{fig:sim-bbb-partial} and \ref{fig:sim-bbc-full} for the partial test categorical data and the full tests on both numeric and categorical data). The higher 95\% confidence limit for the type I error rates for one simulation case (with 100 repetitions) is 0.11. If the test is valid, five simulation instances are expected to pass this limit across 200 H0 simulations (all null hypotheses for all simulations depicted on the same figure). The number of simulation cases with type I error rate greater than 0.11 was always smaller then this expected value.
-The results suggest, moreover, that the proposed tests are somewhat overly conservative if the model has a high predictive performance (type I error rates closer to 0 than expected).
+Simulations based on normally distributed data justified that the proposed confounder tests - in line with theory - provide a valid type I error control (For detailed results, see \ref{fig:sim-normal} for the 'partial' test on numerical data and Supplementary Figures \ref{fig:sim-ccc-full}, \ref{fig:sim-ccb-partial}, \ref{fig:sim-ccb-full}, \ref{fig:sim-bbc-partial}, \ref{fig:sim-bbc-full}, \ref{fig:sim-bbb-partial} and \ref{fig:sim-bbc-full} for the partial test on categorical data and the full tests on both numeric and categorical data). 
+In case of a valid test, the expected type I error rate in the null hypothesis simulation cases (first row and first column of the figures) is less then or equal to the alpha level (0.05). The upper 95\% confidence limit for the type I error rates for one simulation case (i.e. a single tile on the figures) is 0.11 (binomial confidence intervals with 100 repetitions). 
+The results suggest, that the proposed tests are somewhat overly conservative if the model has a high predictive performance (type I error rates closer to 0 than expected).
 
-Simulations with non-normal data showed that the proposed methods are remarkably robust to the violation of normality assumptions for the target variable $\y$ and the confounder $\c$ and, as expected - completely non-parametric regarding the distribution of the predictions $\yhat$). The six simulation cases of normality violation, shown on Figure \ref{fig:sim-non-normal} involved various \emph{sinh-arcsinh} distributions, form totally normal (Fisher's kurtosis: 0, skewness) to severely skewed and heavy tailed (kurtosis: 42, skewness: 6).
-The results show that the violation of normality - as expected - increases the type I error rate, but the increase - depending on the application - might not be severely problematic up to a kurtosis and skewness values as high as 5 and 2 respectively. Furthermore, normality violation becomes less problematic in case of high predictive performance (high association between the predicted and observed values).
+Simulations with non-normal data showed that the proposed methods are remarkably robust to the violation of normality assumptions for the target variable $\y$ and the confounder $\c$ and, as expected, completely non-parametric regarding the distribution of the predictions $\yhat$). The six simulation cases of normality violation, shown on Figure \ref{fig:sim-non-normal}, involved various \emph{sinh-arcsinh} distributions, form normal (Fisher's kurtosis: 0, skewness) to severely skewed and heavy tailed (kurtosis: 42, skewness: 6).
+The results show that the violation of normality - as expected - increases the type I error rate, but the increase - depending on the application - might not be severely problematic up to kurtosis and skewness values as high as 5 and 2 respectively. Furthermore, normality violation becomes less problematic in case of high predictive performance (high association between the predicted and observed values).
 
 \subsubsection*{Power}
 
-When normality assumptions hold, the test generally possess a statistical power of high practical relevance. Power estimates for the 'partial' test (with normality) are shown on Figure \ref{fig:sim-normal}. Notably, with sample sizes as large as 1000, a confounder contributing to only 0.4-0.6\% to the variance of the predictions can already be successfully detected ($w_c = 0.05 - 0.07$) with a power of 60-90\%. With a sample size of 500, a confounder contributing to only 1.4-3\% to the variance of the predictions can be detected ($w_c = 0.1 - 0.14$) with a power greater than 80\% in most of the simulation cases. A sample size of 100 yields an approximate power of 60-100\% for a confounder-variance of 6-7\% ($w_c = 0.2 - 0.21$) in most of the cases. Finally, even with a low sample size of 50, the same amount of confounder variance is detected with a power of at least 50\%. If the confounder explains more than 15\% of variance, it is almost certainly detected with $n \geq 50$.
+Power estimates for the 'partial' test (with normality) are shown on Figure \ref{fig:sim-normal}. Notably, with sample sizes as large as 1000, a confounder contributing to only 0.4-0.6\% to the variance of the predictions can already be successfully detected ($w_c = 0.05 - 0.07$) with a power of 60-90\%. With a sample size of 500, a confounder contributing to only 1.4-3\% to the variance of the predictions can be detected ($w_c = 0.1 - 0.14$) with a power greater than 80\% in most of the simulation cases. A sample size of 100 yields an approximate power of 60-100\% for a confounder-variance of 6-7\% ($w_c = 0.2 - 0.21$) in most of the cases. Finally, even with a relatively low sample size of 50, the same amount of confounder variance is detected with a power of at least 50\%. If the confounder explains more than 15\% of variance, it is almost certainly detected with $n \geq 50$.
 
 Violation of the normality assumptions for $\y$ and $\c$ has a negative effect on the power of the tests, however the loss of power is low or even negligible, if normality is not extremely violated (first 4 distributions on Fig. \ref{fig:sim-non-normal}A) and the confounder-to-signal ratio is greater or equal then 0.3 (Fig. \ref{fig:sim-non-normal}C).
 
@@ -459,10 +474,10 @@ Violation of the normality assumptions for $\y$ and $\c$ has a negative effect o
   \label{fig:hcp}
 \end{figure}
 
-Acquisition batch and age group were statistically significantly associated with fluid intelligence ($R^2=0.032$ and $0.011$ and $p=0.0014$ and $0.001$, respectively). The model trained on the raw (unadjusted) connectivity features predicted fluid intelligence with a medium effect size ($R^2=0.095$, $p<0.001$).
-However, as revealed by the partial confounder test, the model was significantly biased both by age group and acquisition batch (both $p<0.0001$) with later phases of the acquisition and lower age being weakly-moderately ($R^2=0.071$ and $0.034$, respectively) associated to larger predicted values.
+Both acquisition batch and age group were statistically significantly associated with fluid intelligence ($R^2=0.032$ and $0.011$ and $p<0.001$ and $=0.001$, respectively, see also Table \ref{tab:unconditional-pvals}). The model trained on the raw (unadjusted) connectivity features predicted fluid intelligence with a medium effect size ($R^2=0.095$, $p<0.001$).
+The partial confounder test revealed that, the model was significantly biased both by age group and acquisition batch (both $p<0.0001$) with later phases of the acquisition and lower age being weakly-moderately ($R^2=0.084$ and $0.041$, respectively) associated to larger predicted values.
 
-After applying the confound mitigation approaches (feature regression or COMBAT) the partial confound test did not provide evidence of confounder bias anymore ($p < 0.05$ for all). Both feature regression and COMBAT slightly improved the predictive performance in the case of both confounders, with COMBAT providing better performances ($R^2=122$ and $121$ when applied to remove the effect of acquisition and age, respectively).
+After applying confound mitigation approaches (feature regression or COMBAT) the partial confound test did not provide evidence of confounder bias anymore ($p > 0.05$ for all). Both feature regression and COMBAT decreased the predictive performance in the case of both confounders, with COMBAT providing better performances ($R^2=0.75$ and $0.76$ when applied to remove the effect of acquisition and age, respectively).
 
 The full confounder test was highly significant ($p<0.0001$) for all models, indicating that neither of the models were exclusively driven by the confounds.
 
@@ -478,14 +493,16 @@ The full confounder test was highly significant ($p<0.0001$) for all models, ind
   \label{fig:abide}
 \end{figure}
 
-Imaging center and in-scanner motion (normalized mean framewise displacement) were statistically significantly associated with ASD diagnosis ($R^2=0.027$ and $0.028$, respectively, $p<0.001$ for both). The model trained on the raw (unadjusted) connectivity features predicted diagnosis with a medium effect size ($R^2=0.095$, $ROC AUC = 0.71$, $p<0.001$).
-However, as revealed by the partial confounder test the raw model was significantly biased both by age group and acquisition batch (both $p<0.0001$) with several sites (e.g. Carnegine Mellon University or Caltech) and higher motion being weakly-moderately ($R^2=0.071$ and $0.034$, respectively) associated to a higher probability of the model to assign the participant to the ASD group.
+Imaging center and in-scanner motion (normalized mean framewise displacement) were statistically significantly associated with ASD diagnosis ($R^2=0.019$ and $0.028$, respectively, $p<0.001$ for both, see also Table \ref{tab:unconditional-pvals}). The model trained on the raw (unadjusted) connectivity features predicted diagnosis with a medium effect size ($R^2=0.126$, $ROC AUC = 0.71$, $p<0.001$).
+The partial confounder test revealed that the raw model was significantly biased both for age group and acquisition batch (both $p<0.0001$). Several sites (e.g. Carnegine Mellon University, University of Leuven, Social Brain Lab UMC Groningen) and lower motion being weakly-moderately ($R^2=0.071$ and $0.034$, respectively) associated to a lower probability for the participant to be assigned to the ASD group by the model.
 
-After applying the confound mitigation approaches to remove the effect of center (feature regression or COMBAT) the partial confound test did not provide evidence of center-bias anymore ($p < 0.05$ for both techniques). When trying to mitigate the effect of in-scanner motion, feature regression failed to remove the motion-bias from the model and, in fact, it introduced a paradoxical inverse dependence of the predictions on motion estimates. The partial confounder test successfully detected this bias ($p<0.0001$). Applying COMBAT to remove the effect of motion (by using binned motion estimates), in turn, effectively mitigated motion bias, as suggested by the partial confound test ($p=0.54$).
+Both feature regression and COMBAT seemed to significantly attenuate the effect of center, however the partial confound test still provided evidence for a significant center-bias ($p < 0.04$ and $0.01$ for feature regression and COMBAT, respectively). 
 
-Both feature regression and COMBAT slightly improved the predictive performance when mitigating center-effects ($R^2=0.111$ and $0.132$ and $AUC=0.76$ and $0.75$, respectively). With both feature regression and COMBAT, the effort of mitigating motion effects happened at the cost of predictive performance ($R^2=0.009$ and $0.087$ and $AUC=0.59$ and $0.70$, respectively)
+When trying to mitigate the effect of in-scanner motion, feature regression obviously failed to remove the motion-bias from the model and, in fact, it introduced a paradoxical inverse dependence of the predictions on motion estimates. The partial confounder successfully detected this strong bias ($p<0.0001$). Applying COMBAT to remove the effect of motion (by using binned motion estimates), in turn, seemed to effectively mitigate motion-bias, as suggested by the partial confound test ($p=0.64$).
 
-The full confounder test was highly significant ($p<0.0001$) for all models, indicating that neither of the models were exclusively driven by the confounds.
+Both feature regression and COMBAT slightly improved the predictive performance when mitigating center-effects ($R^2=0.111$ and $0.132$ and $AUC=0.76$ and $0.75$, respectively). With both feature regression and COMBAT, the effort of mitigating motion effects happened at the cost of a drop in predictive performance ($R^2=0.02$ and $0.111$ and $AUC=0.59$ and $0.70$, respectively)
+
+The full confounder test was highly significant ($p<0.0001$) for all models, except when regressing-out motion from the features ($p=0.09$) Indicating that this model might have been (almost) exclusively driven by motion artifacts.
 
 % tab:unconditional-pvals
 \renewcommand{\arraystretch}{1.2}
@@ -494,15 +511,15 @@ The full confounder test was highly significant ($p<0.0001$) for all models, ind
 \begin{tabular}{lll|ll|ll|ll|ll} 
 dataset & conf. & method & $R^2_{y, c}$ & $p_{y, c}$ & $R^2_{\hat{y}, c}$ & $p_{\hat{y}, c}$ & $R^2_{\hat{y}, y}$ & $p_{\hat{y}, y}$ & partial test & full test  \\
 \hline
-HCP & acq.  & raw      & 0.032 & <0.001 & 0.084 & <0.001  & 0.082 & <0.001 & <0.001 & <0.001 \\
+HCP & acq.  & raw      & 0.032 & <0.001 & 0.084 & <0.001  & 0.095 & <0.001 & <0.001 & <0.001 \\
     &              & f.reg.    & & &0.003 & 0.99 & 0.066  & <0.001  & 0.99 & <0.001 \\
     &              & COMBAT    & & &0.008 & 0.75 & 0.075  & <0.001  & 0.88 & <0.001\\
 \hline
-    & age   & raw       & 0.011 & 0.001  & 0.041 & <0.001  & 0.082  & <0.001 & <0.001 & <0.001 \\
-    &       & f.reg.    & & &0.001 & 0.3 & 0.07  & <0.001  & 0.5 & <    0.001 \\
+    & age   & raw       & 0.011 & 0.001  & 0.041 & <0.001  & 0.095  & <0.001 & <0.001 & <0.001 \\
+    &       & f.reg.    & & &0.001 & 0.3 & 0.07  & <0.001  & 0.5 & <0.001 \\
     &       & COMBAT    & & &0.004 & 0.055 & 0.076 & <0.001 & 0.12 & <0.001 \\
 \hline
-ABIDE   & center   & raw       & 0.005  & 0.203 &  0.169 & <0.001& 0.126     & <0.001 & <0.001 & <0.001 \\
+ABIDE   & center   & raw       & 0.019  & <0.001 &  0.169 & <0.001& 0.126     & <0.001 & <0.001 & <0.001 \\
         &          & f.reg.    &  & &  0.042 & 0.007 & 0.173     & <0.001 & 0.04 & <0.001 \\
         &          & COMBAT    &  & &  0.05 & 0.001 & 0.17     & <0.001 & 0.01 & <0.001 \\
 \hline
@@ -519,69 +536,78 @@ ABIDE   & center   & raw       & 0.005  & 0.203 &  0.169 & <0.001& 0.126     & <
 \section{Discussion}
 
 Confounder-bias can significantly harm the generalizability and biomedical validity of predictive models. Testing confounder-bias of predictive models can be achieved by considering the "confounder-problem" as assessing \emph{conditional independence} between the predicted values and either the target or the confounder variable. These two scenarios result in two different test, testing whether the model is partially or fully driven by the given confounder.
-Importantly, in predictive modelling, the model predictions are often follow a non-normal distribution, thus the any test for confounder bias must be, at least partly, non-parametric.
-However, as shown by in \citet{shah2020hardness} their the 'no free lunch' theorem, it is effectively impossible to establishing a fully non-parametric conditional independence test with a valid type I error control and non-trivial power.
-Here I propose the use of the Markov-chain Monte-Carlo based conditional permutation test (CPT) of \cite{berrett2020conditional} to test confounder bias in predictive models. Adapting this approach for the confounder testing problem makes it possible to place assumptions about the joint distribution of only two out of the three variables involved; that is, it allows constructing both the partial and full confounder tests so that no assumption is made about the distribution of the model output. 
-Here I propose a computationally effective parallel implementation of CPT that utilizes the parallel pairwise sampler of \cite{berrett2020conditional}, coefficient of determination ($R^2$ or pseudo $R^2$ in case of categorical confounder or classification) as a test statistic and assumes that the conditional distribution between the target variable and the confounder is normal. The implementation provides a test that can be uniformly applied for any predictive model, given that realistic (e.g. cross-validated) model predictions can be obtained.
+Importantly, in predictive modelling, the model predictions are often follow a non-normal distribution, thus any test for confounder bias must be, at least partly, non-parametric.
+However, as shown by \citet{shah2020hardness} in their 'no free lunch' theorem, it is effectively impossible to establish a fully non-parametric conditional independence test with a valid type I error control and non-trivial power.
+Here I propose the use of the conditional permutation test (CPT) of \cite{berrett2020conditional} to test confounder bias in predictive models. Adapting this approach for the confounder testing problem makes it possible to place assumptions about the joint distribution of only two out of the three variables involved; that is, it allows constructing both the partial and full confounder tests so that no assumption is made about the distribution of the model output. 
+The tests are made available in the python package \emph{mlconfound} which builds upon a parallelized, computationally effective implementation of the Markov-chain Monte-Carlo based parallel pairwise sampler of \cite{berrett2020conditional}. It utilizes, coefficient of determination ($R^2$ or pseudo $R^2$ in case of categorical confounder or classification) as a test statistic and assumes that the conditional distribution between the target variable and the confounder is normal. The partial and full confoudner tests available in \emph{mlconfound} can be uniformly applied for any predictive model, given that realistic (e.g. cross-validated) model predictions can be obtained.
 
 The validity and the power of the tests has been investigated in simulations with normally distributed data and with various degrees of non-normality.
 
-The simulations have confirmed that the proposed implementation provides a valid type I error control for both the full and the partial confound test and revealed that both the tests have a high power for various configurations of the association between the target and the confounder, predictive performance, sample size and the confound-to-signal for the partial or signal-to-confound ratios for the full test. 
-Both tests become somewhat conservative (i.e. lower than expected type I error rates ) in the case of very powerful predictive models (when the $R^2$ between the predicted and observed values is greater than 0.7). However, the power of the test remains high with sufficiently large ($\ge 500$) sample sizes.
+These simulations have confirmed that the proposed implementation provides a valid type I error control for both the full and the partial confound test and revealed that both tests have a high power for a wide variety of scenarios, with different strength of the association between the target and the confounder, varying predictive performance, various sample sizes and different true confound-to-signal ratios in the predictions. 
+Both tests were found to become somewhat conservative (i.e. lower than expected type I error rates ) in the case of very powerful predictive models (when the $R^2$ between the predicted and observed values is greater than 0.7). However, the power of the test remains high with sufficiently large ($\ge 500$) sample sizes.
 
-Considering the partial test, if we apply \citeauthor{cohen2013statistical}'s terminology for the effect size of the confounder bias, sample sizes around 500-1000 can robustly identify a very weak confounder bias (e.g a confounder explaining 1-2\% of the variance in the prediction). A currently somewhat more common sample size of 100 will very likely identify medium sized confounder-biases (around 9\%). Strong biases  (>25\%) can be very robustly detected with sample sizes as low as 50. 
+Considering the partial test, if we apply \citeauthor{cohen2013statistical}'s terminology for the effect size of the confounder bias, sample sizes around 500-1000 can robustly identify a very weak confounder bias (e.g a confounder explaining 1-2\% of the variance in the prediction). A lower sample size of 100 will still very likely identify medium sized confounder-biases (around 9\%). Strong biases  (>25\%) can be very robustly detected with sample sizes as low as 50. 
 
-As expected, the power of the full confounder test is very similar to the partial test, when investigating the contribution of the target to the prediction, instead of the confounder.
+As expected, the power of the full confounder test is very similar to the partial test, hence the only difference is that the conditional contribution of the target to the prediction is investigated, instead that of the confounder.
 
 While different biomedical applications might consider different amounts of bias to be relevant, an a-priory power calculation can help identifying the necessary sample size in order to exclude the possibility of a relevant confounder bias with a high probability.
 
-Importantly, the simulations strongly suggest that both tests are very robust to the violation of the normality assumption for the conditional distribution between the target and the confounder. Type I error is well controlled even in case of highly skewed and heavy tailed distributions (kurtosis > 5, skewness > 2) and gets significantly inflated only with extremely degenerate distributions (see the purple distribution on Fig. \ref{fig:sim-non-normal}). Due to the conservatives of the tests in case of very accurate models, even this extremely skewed and heavy tailed distribution resulted in lower than the nominal type I error rates if the predictions were strongly associated to the target variable.
+Importantly, the simulations strongly suggest that both tests are very robust to the violation of the normality assumption for the conditional distribution between the target and the confounder. Type I error is well controlled even in case of highly skewed and heavy tailed distributions (kurtosis > 5, skewness > 2) and gets significantly inflated only with extreme violations of normality (see the purple distribution on Fig. \ref{fig:sim-non-normal}). Due to the conservatives of the tests, if predictive model is very accurate, even this extremely skewed and heavy tailed distribution resulted in lower than the nominal type I error rates.
 
 Non-normality has a negative effect on the power of the both tests, however, the decrease in power is in many simulation cases negligible and gets only relevant if the sample size and/or the confounder-effect is low.
 
-Given the power and the robustness of the proposed tests, they might become a useful tool in diagnosing predictive models, not exclusively in the biomedical filed. 
+Given the power and the robustness of the proposed tests, they might become a useful tool in diagnosing predictive models in a wide spectrum of applications.
 
-In such studies, confounder-bias has often been investigated (if investigated at all) by testing the association between the confounder variable and the predictive values, see e.g. \citep{spisak2020pain}.
+For instance, in biomedical research, confounder-bias has often been investigated (if investigated at all) by testing the (unconditioned) association between the confounder variable and the predictive values, see e.g. \citep{spisak2020pain}.
 However, the significance of this association does not necessarily imply a significant confound-bias of the model, especially if the confounder is also associated to the true target variable. In this case, namely, the model still might not be directly driven by the confounder, i.e. the dependence of the predictions on the confounder can be explained solely by the confounder-target association. 
-Arguably, in certain applications, the researcher might aim to fully eliminate confounder-related variance of the predictions and in this case testing the association (unconditional independence) between the confounder and the predictions might be sufficient. However, a much more realistic aim is to construct models that allow a reasonable degree of confounder-association of the predictions, but are likely not directly driven by confounder-information, i.e. the prediction-confounder association is proportional to, and can likely be fully explained by, the target-confounder association.
+Two examples for this situation can be found in the presented analysis of real data (when applying COMBAT to mitigate age-bias in the HCP data and when regressing out the center-effect from the ABIDE data).
+
+Arguably, in certain applications, the researcher might aim to fully eliminate confounder-related variance of the predictions and in this case testing the association (unconditional independence) between the confounder and the predictions might be sufficient. However, a much more realistic aim is to construct models that allow a reasonable degree of marginal confounder-association of the predictions, but are likely not directly driven by confounder-information, i.e. the prediction-confounder association is proportional to, and can likely be fully explained by, the target-confounder association.
 Put simply, this is what is tested by the proposed partial confounder test.
 
-Obviously, a true confounder bias might still be present in the model, even if the the target-confounder association likely explains the prediction-confounder, i.e. the model might still use the confounder effect in the features (e.g artifacts) to present that pert of the variance in the prediction. Nevertheless, in most of the cases, it does not seem likely that exclusively those confounder components are captured the model that are needed to mimic the unbiased model and it might be often a much more plausible explanation that the confounder-variance is simply not captured by the model (or it was effectively mitigated by feature cleaning/harmonization).
+Obviously, a true confounder bias might still be present in the model, even if the the target-confounder association likely explains the prediction-confounder association, i.e. the model might still use the confounder's effect on the features (e.g artifacts) to construct the corresponding part of the variance in the prediction. Nevertheless, in most of the cases, it does not seem likely that the model at the same time (i) misses that specific "part" of the target variable's variance in the features that is shared with the confoudner (ii) captures exclusively those components of the confounder's variance in the features that is needed to mimic the unbiased model.
+Usually a much more plausible explanation is that the direct confoudner effect is simply not present in the features or not captured by the model.
 
-Among the many potential areas of applications, the proposed tests could be certainly useful in translational neuroscience. Applying predictive modelling and machine learning, for instance, on functional neuroimaging data holds a great potential for both revolutionizing our understanding of the physical basis of mind and delivering clinically useful tools \citep{woo2017building, wager2013fmri, spisak2020pain}. However, the presence of confounders typical for biomedical research (e.g. sample demographics, center-effects) and specific to the data acquisition and processing approach (e.g. imaging artifacts) present a great challenge to these efforts and are, currently, often neglected.
+Among the many potential areas of applications, the proposed tests could be certainly useful in translational neuroscience. A characteristic example is the field of "predictive neuroscience", where applying predictive modelling and machine learning on functional neuroimaging data holds a great potential for both revolutionizing our understanding of the physical basis of mind and delivering clinically useful tools \citep{woo2017building, wager2013fmri, spisak2020pain}. However, the presence of confounders typical for biomedical research (e.g. sample demographics, center-effects) and specific to the data acquisition and processing approach (e.g. imaging artifacts) present a great challenge to these efforts and are, currently, often neglected.
 
 To demonstrate the usefulness of the proposed tests in detecting various types of confounder-bias, here they have been deployed in two research settings where specific types of confounding effects have previously been described. 
-First, functional connectivity data from the Human Connectome Project (HCP) \citep{van2013wu} was used to build predictive models of fluid intelligence and to test for the previously discussed confounding effects of age \cite{lohmann2021predicting, dubois2018distributed} and also a somewhat ignored aspect, the acquisition data within the course of the data acquisition process.
-Second, functional connectivity data from the ABIDE \citep{di2014autism} was used to investigate the potential motion- and center-bias (as previously reported by e.g. \cite{spisak2014voxel, spisak2019optimal, gotts2013perils}) when training models that aim to predict ASD diagnosis.
+First, functional connectivity data from the Human Connectome Project (HCP) \citep{van2013wu} was used to build predictive models of fluid intelligence and to test for the previously discussed confounding effect of age \cite{lohmann2021predicting, dubois2018distributed} and also a somewhat ignored aspect, the acquisition date of the data within the course of the data acquisition process.
+Second, functional connectivity data from the ABIDE \citep{di2014autism} database was used to investigate the potential motion- and center-bias (as previously reported by e.g. \cite{spisak2014voxel, spisak2019optimal, gotts2013perils}) when training models that aim to predict ASD diagnosis.
 
-When trained on the raw (unadjusted) connectivity features, in all four cases, the confounders were statistically significantly associated to both the target variable and the model predictions (with weak-to-moderate effect sizes) and the proposed partial confounder test provided significant evidence against the null-hypothesis of no confounder bias (i.e. conditional independence between the confounder and the predictions, given the target). 
+The hypothesised confound effects were clearly present in both datasets.
 
-The detected confounder bias is most probably of practical relevance for all four confounders. 
+In case of the HCP dataset, the weak but statistically significant association between age and IQ predictions could likely exaggerate to a serious bias when testing the model on data of participants outside of the (relatively narrow)
+age range of the training sample. In this case, the bias could significantly harm out-of-sample generalizability of the model. The bias of the model for the acquisition batch (phase of the study the acquisition belongs to) can also be problematic and it has not yet been thoroughly discussed in case of the HCP dataset. There can be manifold reasons for the observed associations. Fluid intelligence of the participants can be affected by a changing selection bias during requirement (e.g. as the human connectome project gradually received more public interest during its course the sociodemographic and educational characteristics of the volunteer sample might have changed). The model can utilise such changing characteristics of the data (caused by e.g. gradual changes in the calibration settings of the measuring equipment or the changing level of experience of the research staff) to predict this part of the effect. This is obviously undesirable for any brain-based predictive model of fluid intelligence.
 
+In the ABIDE dataset, neither the medium-strong center-bias nor the age-bias is surprising but both are obviously problematic for a diagnostic model of autism. For instance the model trained on the raw features - depending on the calibration of the predicted class probabilities - might classify all participants form e.g. the CMU (Carnegie Mellon University) center as neurotypical control participants. It's easy to see that this bias can possibly lead to a very low predictive performance on out-of-center data. Similarly, a model biased by motion - next to having questionable neuroscientific validity - might systematically fail in populations with higher motion or altered motor characteristics (as known e.g. for ADHD \cite{eloyan2012automated}).
 
-In case of the HCP dataset, the weak, but statistically significant association between age and IQ predictions could likely exaggerate to a serious bias when testing the model on data of participants outside of the age range of the training sample (that is, the bias could likely significantly harm out-of-sample generalizability). The bias of the model for the acquisition batch (phase of the study the acquisition belongs to) can also be problematic and - to my best knowledge - it was not yet reported in the HCP dataset. There can be manifold reasons for the observed associations. Fluid intelligence of the participants can be affected by a change of selection bias during requirement (e.g. as the human connectome project got more public interest during its course the the sociodemographic and educational characteristics of the volunteer sample might have changed). The model can utilise changing characteristics of the data (e.g. gradual changes in the calibration settings of the measuring equipment or the changing level of experience/motivation of the research staff) to predict this part of the effect. This is obviously undesirable for any brain-based predictive model of fluid intelligence.
+Confounder mitigation techniques, with one exception, tended to decrease confounder bias. The partial confoudner test provided detailed insights about the differences of the techniques for each confounder. It revealed that, in the case of both the acquisition-bias and the age-bias was very effectively removed by both feature regression and COMBAT (p>0.05 for all). Given the high power of the test at these sample sizes (N=999 and 866 for the HCP and the ABIDE datasets, respectively), any remaining confounder-bias is most probably negligible and out of the range of practical relevance.
 
-In the ABIDE dataset, neither the medium-strong center-bias nor the age-bias is surprising but both are obviously undesired for a diagnostic model of autism. For instance the model trained on the raw features - depending on the calibration of the predicted class probabilities - might classify all participants form e.g. the CMU (Carnegie Mellon University) center as neurotypical control participants. It's easy to see that this bias can possibly lead to a very low predictive performance on out-of-center data. Similarly, a model biased by motion - next to having questionable neuroscientific validity - might systematically fail in populations with higher motion or altered motor characteristics (as known e.g. for ADHD \cite{eloyan2012automated}).
+The performance of the investigated confound mitigation techniques is, however, less convincing for the ABIDE dataset. The center-bias of the classification in this massively multi-center dataset was, namely, found to be significant, even after feature regression and COMBAT, although the p-values were larger with one order of magnitude, suggesting that a large part of the center effects was still successfully removed by both approaches. While determining the relevance of the remaining bias is to be performed based on the experimental context and the requirements towards the predictive marker, significant p-values of the partial confoudner test generally suggest that this model would either require more effective data harmonization or a validation on external data, in order to construct realistic estimates of the amount of bias.
 
-The investigated confound regression techniques, feature regression  \citep{spisak2014voxel, dukart2011age, abdulkadir2014reduction, rao2017predictive} and COMBAT \citep{johnson2007adjusting}, did not fully eliminate the association (unconditional dependence) between the confounder and the predictions (neither for the HCP nor for the ABIDE dataset, all the corresponding p-values were smaller or equal than 0.003). However, as discussed above, fully eliminating this association is not necessarily a requirement for a model without confounder-bias. Indeed, the partial confounder test revealed that except one, all models become likely free of confounder bias or - more precisely - the bias was suppressed to such an extent that the test was not able to detect it anymore. Given the high power of the test at these sample sizes (N=999 and 866 for the HCP and the ABIDE datasets, respectively), any confounder remaining, but not detectable confounder bias is most probably negligible or is not of practical relevance.
-The exception, where confound mitigation did not successfully eliminate confounder-bias, is confounder regression of motion in the ABIDE dataset. Interestingly, in this case, the association between the confounder and the predictions become stronger but with an opposite sign, while the prediction performance significantly dropped. COMBAT, on the other hand still effectively mitigated confound-bias in this case, although with a slight decrease of predictive performance, as well. A possible explanation to these phenomena is that in scanner motion is not simply a confounder but, as previously described \citep{fournier2010motor, anzulewicz2016toward}, it might have a complex relationship to ASD. Therefore, regressing out motion estimates from the connectivity features might eliminate significant amount of signal-of-interest, especially in functional connections that are associated with motor deficits in ASD. 
-In such cases, applying feature regression might be a too "aggressive" solution. As COMBAT was originally developed for harmonizing effects of categorical variables in the dataset (e.g. center or batch), our method of inputting the binned "motion groups" into COMBAT - together with the ability of the empirical Bayes method to incorporate information about sample variances - might have resulted in "less aggressive" data harmonization and preserved more signal-of-interest. 
-The behavior of existing confound elimination techniques in such situations and the applicability of COMBAT with numeric confiders is an interesting target of further research, where the proposed conditional permutation based confounder tests can be deployed.
+Motion-bias in the ABIDE dataset was not detectable anymore after COMBAT, but remained highly significant after feature regression.
+Interestingly, in this case, the association between the confounder and the predictions become even stronger than before but with an opposite sign. Meanwhile, the prediction performance significantly dropped. 
+ A possible explanation to these phenomena is that in scanner motion is not simply a confounder but, as previously described \citep{fournier2010motor, anzulewicz2016toward}, it might have a complex relationship to ASD. Therefore, regressing out motion estimates from the connectivity features might eliminate significant amount of signal-of-interest (especially in functional connections that are associated with motor deficits in ASD).
+ On the other hand, motion artefacts were previously shown to display complex spatiotemporal patterns in fMRI-based functional connectivity estimates \cite{spisak2014voxel} and simply regressing them out of the features is far from being sufficient for removing their effect on the model. The previously described "residual artefacts" and their regional interactions might be responsible for the paradox behavior of the predictive model and raises caution for using feature regression to mitigate the effect of similarly complex confounders.
+ 
+ As COMBAT was originally developed for harmonizing effects of categorical variables in the dataset (e.g. center or batch), using it to remove the effect of continuous variables is not trivial. The presented method of inputting the binned "motion groups" into COMBAT resulted in an efficient removal of motion-bias and, at the same time, preserved a significant amount of signal-of-interest. 
+ Nevertheless, inputting discretized versions of continuous variables into COMBAT might be sub-optimal and raises further questions e.g regarding the optimal number of bins used during the discretization.
+ The application of the partial confounder test has, therefore, pointed out that 
+ behavior of existing confound elimination techniques in such situations and the applicability of COMBAT with continuous numeric confiders is an important target of further research, where the proposed conditional permutation based confounder tests can be deployed.
 
-The full confounder test - as expected - confirmed that none of the model is not fully driven by the confounder variable or, in other words, the target and the prediction were not independent, given the confounders. While the full confounder test might seem less useful in the presented examples, it might become useful in exploratory efforts, where the questions is simply if it is possible at all to train an unbiased predictive model.
+The full confounder test did not provide any evidence that the paradox motion-regression model in the ABIDE dataset captures any extra variance over that explained by the confoudner. In other words, this model might be exclusively driven by motion artifacts.
+For all other models, the full confound test confirmed that - even if there was a significant confounder-bias, the model was not fully driven by the confounder (in other words, the target and the prediction were not independent, given the confounders).
+This example highlight that the full confounder test might become useful in exploratory phases of model development, where models might be still severely biased and the questions is rather if there is any biomedical relevant signal driving the model.
 
--------------------
-Both tests require only the target variable, the model predictions and the putative confounder as input, that is, they can be performed without needing to re-fit the model.
------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 
 The lack of rigorous statistical tests of confounder-bias significantly hampers the development of predictive models in many fields of research. Even tough several approaches for mitigating the effects of counfounder variables in machine learning have been recently proposed, these can potentially remove signal-of-interest together with the confounder and an informed decision about confound mitigation strategy is impossible without a proper test of confounder-bias in the resulting model.
 
-To fill this critical gap in predictive model development, I propose two novel tests, the partial and the full confounder tests, which test the null hypotheses of 'no confounder-bias' of 'full confounder-bias', respectively. Both approaches are based on a recently proposed conditional permutation framework, with a mathematical justification of valid type I error control. The tests were constructed so that they do not place any assumption about the distribution of the model predictions, thereby being applicable with arbitrary machine learning algorithms.
+To fill this critical gap in predictive model development, I propose two novel tests, the partial and the full confounder tests, which probe the null hypotheses of 'no confounder-bias' and 'full confounder-bias', respectively. Both approaches are based on a recently proposed conditional permutation framework, with a mathematical justification of valid type I error control. The tests were constructed so that they do not place any assumption about the distribution of the model predictions and require only the target variable, the model predictions and the putative confounder as input, that is, they can be performed without needing to re-fit the model.
 
-Given the high statistical power and the high robustness to the violation of the assumptions on the data (normality of the conditional distribution of the target and the confounder variables), the tests can be useful in a wide variety of applications.
+Given the easy application, the high statistical power, the robustness to the violation of the assumptions on the data and the computationally effective implementation (python package \emph{mlconfound}\footnote{\href{https://mlconfound.readthedocs.io}{https://mlconfound.readthedocs.io}}) the tests are deployable in a wide variety of applications.
 
 As demonstrated on functional brain connectivity-based predictive models of fluid intelligence and autism, the tests can guide the optimization of confound mitigation and expected to improve the assessment of the robustness, generalizability and neurobiological validity of predictive models in biomedical research, thereby paving the way for the development of clinically useful machine learning biomarkers.
 
