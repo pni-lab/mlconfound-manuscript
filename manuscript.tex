@@ -66,7 +66,7 @@ Recently, three dedicated techniques \citep{chaibub2019permutation, ferrari2020m
 The permutation-based approach of \cite{chaibub2019permutation} evaluates the null-hypothesis of no confounder bias via "restricted permutations" that retain the observed ratios of class labels within batches (often referred to as balanced permutations in the literature) However, as shown by \cite{southworth2009properties} and further discussed by \cite{hemerik2018exact}, balanced permutations do not provide a correct null behavior and can be invalid in certain circumstances. Indeed, \cite{ferrari2020measuring} demonstrated that this method does not guarantee a proper type I error control with biased classification problems.
 The 'confounder index' (CI) proposed by \cite{ferrari2020measuring}, by design, does not provide any quantification of statistical significance.
 Moreover, both approaches involve repeated re-fitting of the machine learning model, which might not be feasible for models with high computational complexity (especially when hyperparameters are optimized in a nested cross-validation).
-The Kolmogorov Complexity-based causal inference test, as proposed by \cite{wachinger2021detect}, aims at determining whether it is more likely that the the predictors are a direct cause of the target variable or, alternatively, there exists an unobserved random variable that is the cause of both. It's computation assumes 'faithfulness' (if two variables are independent, there is no direct influence between the two in the underlying graph) a strong condition that might not be fulfilled in many real applications (e.g. functional MRI is an \emph{indirect} measure of neural activation, rendering the alternative hypothesis of this test true in absence of any real confounder).
+The Kolmogorov Complexity-based causal inference test, as proposed by \cite{wachinger2021detect}, aims at determining whether it is more likely that the predictors are a direct cause of the target variable or, alternatively, there exists an unobserved random variable that is the cause of both. It's computation assumes 'faithfulness' (if two variables are independent, there is no direct influence between the two in the underlying graph) a strong condition that might not be fulfilled in many real applications (e.g. functional MRI is an \emph{indirect} measure of neural activation, rendering the alternative hypothesis of this test true in absence of any real confounder).
 
 % todo: RO and CI: classification, KC: regression
 
@@ -404,14 +404,14 @@ The feature mitigation strategies were separately applied for acquisition batch 
 
 The total of 5 types of features (raw, regressing out acquisition batch, regressing out age group, COMBAT with acquisition batch, COMBAT with age group) were independently incorporated into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the individual fluid intelligence scores with a ridge-regression \citep{hoerl1970ridge}. The $\alpha$ parameter of the ridge model was considered as a hyperparameter ($\alpha \in \{0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cv-s and with mean squared error as optimization metric. Confound mitigation was performed inside of the outer cross-validation loop, to avoid leakage.
 
-Analysis code is available as jupyter notebook\footnote{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_hcp.ipynb} in the github repository of the 'mlconfound' package.
+Analysis code is available as jupyter notebook\footnote{\href{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_hcp.ipynb}{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_hcp.ipynb}} in the github repository of the 'mlconfound' package.
 
 
 \subsubsection*{ABIDE: testing motion- and center-bias in predictive models of autism spectrum disorder diagnosis}
 
 The proposed tests were applied to provide evidence of center- and  motion-bias in diagnostic predictive models of autism spectrum disorder (ASD), trained on the Autism Brain Imaging Data Exchange (ABIDE) dataset \citep{di2014autism} involving 866 participants; ASD: 402, healthy control (HC): 464. Preprocessed regional timeseries data was obtained as shared with the paper \citep{dadi2019benchmarking} which was based on preprocessed image data provided by the Preprocessed Connectome Project \citep{craddock2013neuro}.
 
-Tangent correlation across the timeseries of the n=122 regions of the BASC \citep{bellec2010multi} atlas) was computed with nilearn\footnote{http://nilearn.github.io/} \citep{huntenburg2017loading, esteve2015big}. 
+Tangent correlation across the timeseries of the n=122 regions of the BASC \citep{bellec2010multi} atlas) was computed with nilearn\footnote{\href{http://nilearn.github.io/}{http://nilearn.github.io/}} \citep{huntenburg2017loading, esteve2015big}. 
 
 The resulting functional connectivity estimates were considered as features either (i) in their raw form or after applying (ii) feature regression \citep{rao2017predictive} or (iii) COMBAT \citep{johnson2007adjusting, fortin2018harmonization}.
 The investigated confounder variables were 'imaging center' and in-scanner motion, as measured by the mean framewise displacement of \cite{power2014methods}).
@@ -423,7 +423,7 @@ The total of five types (raw, feature regression of site, feature regression of 
 
 Confounder testing was performed on the class probabilities (instead of the predicted labels).
 
-Analysis code is available as jupyter notebook\footnote{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_abide.ipynb} in the github repository of the 'mlconfound' package.
+Analysis code is available as jupyter notebook\footnote{\href{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_abide.ipynb}{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_abide.ipynb}} in the github repository of the 'mlconfound' package.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
