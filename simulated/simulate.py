@@ -101,9 +101,7 @@ if __name__ == '__main__':
 
     rng = np.random.default_rng(args.random_seed)
 
-    results = pd.DataFrame(columns=["p_cpt_lin", "p_cpt_gam", "p_pc_pearson", "p_pc_pearson", "r2_y_c", "r2_yhat_c", "r2_y_yhat",
-                                    "n", "w_yc", "w_yyhat", "w_cyhat",
-                                    "num_perms", "random_seed"])
+    results = pd.DataFrame()
 
     for w_yc, w_yyhat, w_cyhat, n in tqdm(list(all_param_configurations)):
 
