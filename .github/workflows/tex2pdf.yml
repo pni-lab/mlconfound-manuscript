@@ -1,0 +1,21 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Convert manuscript to pdf
+
+on: [push]
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: manuscript.tex
+          latexmk_use_xelatex: true
+      
+      - uses: actions/upload-artifact@master
+        with:
+          name: my-artifact
+          path: manuscript.pdf
