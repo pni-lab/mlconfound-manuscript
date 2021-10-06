@@ -14,3 +14,8 @@ jobs:
         with:
           root_file: manuscript.tex
           latexmk_use_xelatex: true
+      
+      - uses: actions/upload-artifact@master
+        with:
+          name: my-artifact
+          path: manuscript.pdf
