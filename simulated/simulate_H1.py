@@ -60,6 +60,18 @@ parser.add_argument("--out", dest="out_file", action="store", default=None,
 if __name__ == '__main__':
     args = parser.parse_args()
 
+    # see if file is already there
+    if args.out_file is None:
+        args2 = vars(args).copy()
+        args2['out_prefix'] = None
+        params = '_'.join(str(args2)[10:].split(', '))[:-1]
+        filename = args.out_prefix + '_' + params + '.csv'
+    else:
+        filename = args.out_file
+    if os.path.exists(filename):
+        print("Already calculated. Skipping this simulation run.")
+        sys.exit()
+
     if args.nonlin_trf == "identity":
         nonlin_trf = identity
     elif args.nonlin_trf == 'squared':
@@ -82,9 +94,12 @@ if __name__ == '__main__':
 
     all_n = [50, 100, 500, 1000]
 
-    all_yc = [0.5, 1, 1.5, 2]
-    all_yyhat = [0.5, 1, 1.5, 2]
-    all_cyhat = [0.5, 1, 1.5, 2]
+    #     w  0    0.33  0.66  1    2
+    #     r2 0%   10%   25%  50%  80%
+    #     r  0    .3    .5   .7  .9
+    all_yc = [0, 0.33, 0.66, 1, 2]
+    all_yyhat = [0, 0.33, 0.66, 1, 2]
+    all_cyhat = [0, 0.33, 0.66, 1]  # H0 or H1
     #########################################################################
 
     print('Number of simulated:', np.prod([len(i) for i in [
