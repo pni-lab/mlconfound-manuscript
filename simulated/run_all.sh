@@ -6,7 +6,7 @@ python3 $DIR/simulate_H0.py --out=$DIR/results/h0_ccc_partial_d1e0_linear.csv --
 
 python3 $DIR/simulate_H0.py --out=$DIR/results/h0_ccc_partial_d01e0_linear.csv --mode=partial --delta=0.1 --epsilon=0 --nonlin-trf=identity --repetitions=1000
 
-python3 $DIR/simulate_H0.py --out=$DIR/results/h0_ccc_partial_d01e5_linear.csv --mode=partial --delta=0.1 --epsilon=5 --nonlin-trf=identity --repetitions=1000
+python3 $DIR/simulate_H0.py --out=$DIR/results/h0_ccc_partial_d01e3_linear.csv --mode=partial --delta=0.1 --epsilon=3 --nonlin-trf=identity --repetitions=1000
 
 python3 $DIR/simulate_H0.py --out=$DIR/results/h0_ccc_partial_d1e0_sigmoid.csv --mode=partial --delta=1 --epsilon=0 --nonlin-trf=sigmoid --repetitions=1000
 
