@@ -322,6 +322,18 @@ $$T(\y, \yhat, \c^{(j)}) = R^2(\yhat, \c^{(j)})$$
 which allows interpretable, two tailed inference about confoudner-bias in predictive modelling.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[!b]
+  \centering
+  \includegraphics[width=0.75\paperwidth]{fig/sim_h0_demo.eps}
+  \caption{\textbf{Type-I error control and power of the conditional permutation-based confound testing for predictive modelling in normally distributed simulated data}. \\
+  Heatmaps depict positive rates (ratio of p-values lower than 0.05, color coded as shown by the palette at the bottom) in various simulations settings (100 simulations per tile) with different covariance between the target and the confounder (given as $R^2_{y,c}$ on the vertical axes of the heatmaps), for different sample sizes (N, horizontal axes).
+  Rows and columns correspond to simulations with different signal-in-prediction (y+c) and confound-to-signal values, respectively. The first row and the first column contain simulations under H0 (no confounder bias) and separated form the simulations under the alternative hypothesis with dashed line. Positive rates for the simulations under the null and alternative hypotheses can be interpreted as type I error rate and statistical power, respectively. The higher confidence limit for the type I error rates is 0.11 for each tile, with 5 tiles expected to pass it form all H0 tiles.
+  The actual weights $w_{Y}$, $w_{C}$ and $w_{e}$ are depicted at the bars on top of each heatmap and color coded as shown in the legend at the bottom. Above each heatmap, the strengths of the associations of $\hat{y}$ to $Y$ and $C$, respectively, are given with $R^2$ values averaged over all simulation cases of the heatmap.
+  }
+  \label{fig:sim-normal}
+\end{figure}
+
+
 \subsection{Validation on simulated data}
 
 Using CPT to test confounder-bias in predictive modelling allows relaxing assumptions on $\yhat$ (for both the partial and the full test) but - in line with the "no free lunch" theorem, requires knowing - or putting assumptions on - the joint distribution of the other two variables ($\yhat$ and $\c$). 
