@@ -1,0 +1,9 @@
+graph {
+	rankdir=LR
+	c [label=c]
+	y [label=y]
+	yhat [label=<y&#770;>]
+	c -- yhat [label="0.05 (p=0.009*)" style=dashed]
+	c -- y [label=0.019]
+	y -- yhat [label=0.17]
+}

@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[x11names, svgnames, rgb]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{snakes,arrows,shapes}
+\usepackage{amsmath}
+%
+%
+
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0pt}%
+
+%
+
+\begin{document}
+\pagestyle{empty}
+%
+%
+%
+
+\enlargethispage{100cm}
+% Start of code
+\begin{tikzpicture}[>=latex',line join=bevel,]
+%%
+\node (c) at (27.0bp,18.0bp) [draw,ellipse] {c};
+  \node (y) at (188.5bp,53.0bp) [draw,ellipse] {y};
+  \node (yhat) at (350.0bp,18.0bp) [draw,ellipse] {<<y\&\#770;>>};
+  \draw [] (c) ..controls (82.887bp,30.044bp) and (132.87bp,41.011bp)  .. (y);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (92.5bp,43.5bp) node {0.019};
+  \draw [dashed] (c) ..controls (74.615bp,14.069bp) and (104.67bp,11.894bp)  .. (131.0bp,11.0bp) .. controls (182.08bp,9.2662bp) and (194.92bp,9.2662bp)  .. (246.0bp,11.0bp) .. controls (272.33bp,11.894bp) and (302.39bp,14.069bp)  .. (yhat);
+  \draw (188.5bp,18.5bp) node {0.042 (p=0.04*)};
+  \draw [] (y) ..controls (244.39bp,40.956bp) and (294.37bp,29.989bp)  .. (yhat);
+  \draw (284.5bp,43.5bp) node {0.173};
+%
+\end{tikzpicture}
+% End of code
+
+%
+\end{document}
+%
+
+
