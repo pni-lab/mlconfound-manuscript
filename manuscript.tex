@@ -62,53 +62,62 @@ Third, batch effects or, in multi-center studies, center-effects can also cause 
 
 Various data cleansing, correction and harmonization approaches have been proposed to mitigate detrimental effects of confounders, ranging from sample matching \citep{rao2017predictive} and regression-based techniques \citep{rao2017predictive, dukart2011age, spisak2014voxel, abdulkadir2014reduction} to the popular non-parametric empirical Bayes-based method of \cite{johnson2007adjusting} and sophisticated deep-learning oriented solutions \citep{zhao2020training, hognon2019standardization}. However, it is often unclear which variables should be considered as confounders during harmonization and such approaches hold risks of eliminating signal-of-interest \citep{wachinger2021detect}.
 
-Powerful and robust statistical tests to quantify the confounding effect of certain variables in predictive models could substantially foster both the the identification of confounders to correct for and the assessment of the effectiveness of various confound-mitigation and data harmonization approaches. Such methods, however, have to tackle the fact that the conditional distribution of the models' output, given the target, is often non-normal and non-linear, as a consequence of e.g. model regularization \citep{garcia2009study, kristensen2017whole}.
+Powerful and robust statistical tests to quantify confounding effects in predictive models could substantially foster both the identification of confounders to correct for and the assessment of the effectiveness of various confound-mitigation approaches. Such methods, however, have to tackle the fact that the conditional distribution of the models' output, given the target, is often non-normal and non-linear, as a consequence of e.g. model regularization \citep{garcia2009study, kristensen2017whole}; see Supplementary Material \ref{sup:nomlinviol} for a simplistic example.
 
-Recently, three dedicated techniques \citep{chaibub2019permutation, ferrari2020measuring, wachinger2021detect} have been proposed for quantifying confounder bias in predictive modelling.
+Recently, three dedicated techniques \citep{chaibub2019permutation, ferrari2020measuring, wachinger2021detect} have been proposed for quantifying confounder effects in predictive modelling.
 
-The permutation-based approach of \cite{chaibub2019permutation} evaluates the null-hypothesis of no confounder bias via "restricted permutations" that retain the observed ratios of class labels within batches (often referred to as balanced permutations in the literature) However, as shown by \cite{southworth2009properties} and further discussed by \cite{hemerik2018exact}, balanced permutations do not provide a correct null behavior and can be invalid in certain circumstances. Indeed, \cite{ferrari2020measuring} demonstrated that this method does not guarantee a proper type I error control with biased classification problems.
-The 'confounder index' (CI) proposed by \cite{ferrari2020measuring}, by design, does not provide any quantification of statistical significance.
+The permutation-based approach of \cite{chaibub2019permutation} evaluates the null-hypothesis of no confounder bias via "restricted permutations" that retain the observed ratios of class labels within batches (often referred to as balanced permutations in the literature). However, as shown by \cite{southworth2009properties} and further discussed by \cite{hemerik2018exact}, balanced permutations do not provide a correct null behavior and can be invalid in certain circumstances. Indeed, \cite{ferrari2020measuring} demonstrated that this method does not guarantee a proper type I error control with biased classification problems.
+The 'confounder index' (CI) proposed by \cite{ferrari2020measuring}, on the other hand, does not provide any quantification of statistical significance.
 Moreover, both approaches involve repeated re-fitting of the machine learning model, which might not be feasible for models with high computational complexity (especially when hyperparameters are optimized in a nested cross-validation).
-The Kolmogorov Complexity-based causal inference test, as proposed by \cite{wachinger2021detect}, aims at determining whether it is more likely that the predictors are a direct cause of the target variable or, alternatively, there exists an unobserved random variable that is the cause of both. It's computation assumes 'faithfulness' (if two variables are independent, there is no direct influence between the two in the underlying graph) a strong condition that might not be fulfilled in many real applications (e.g. functional MRI is an \emph{indirect} measure of neural activation, rendering the alternative hypothesis of this test true in absence of any real confounder).
+The Kolmogorov Complexity-based causal inference test, as proposed by \cite{wachinger2021detect}, aims at determining whether it is more likely that the predictors are a direct cause of the target variable or, alternatively, there is an unobserved random variable that is the cause of both. However, this null hypothesis might not be of interest in many real applications. For instance, causation between several psychological or clinical states and functional MRI activity-connectivity is obviously not \emph{direct}, as functional MRI itself is an \emph{indirect} measure of neural activation. In such cases, the alternative hypothesis of this test might be true in absence of any real confounder.
 
 % todo: RO and CI: classification, KC: regression
 
-In this paper, I formulate the 'confounder problem' as a special case of conditional independence testing \citep{dawid1979conditional}. This allows relating the problem to the seminal work of \cite{shah2020hardness}, who showed that, without placing some assumptions on the joint distribution of the involved variables, establishing a conditional independence test with a valid type I error control and non-trivial power is effectively impossible ("no free lunch" theorem).
+In this paper, I formulate the 'confounder problem' as a special case of conditional independence testing \citep{dawid1979conditional}. This allows relating the problem to the seminal work of \cite{shah2020hardness}, who showed that, without placing some assumptions on the joint distribution of the involved variables, establishing a conditional independence test with a valid type I error control and non-trivial power is effectively impossible ("no free lunch" theorem). 
+As an important consequence, partial correlation - a trivial candidate for investigating the dependence between the predictions and the confounder (given the target variable) - might fail if the corresponding conditional distributions are non-normal or if non-linear relationships are involved. These conditions are very common for case of predictive modelling \citep{garcia2009study, kristensen2017whole} (Supplementary Material \ref{sup:nomlinviol})
 
-Next, I utilize the permutation-based conditional independence framework of \cite{berrett2020conditional}, to construct two novel tests for evaluating the confounder-bias in predictive models.
+To overcome the limitations of partial correlation (demonstrated on Fig. \ref{fig:sim-h0-demo}), I build on the permutation-based conditional independence framework of \cite{berrett2020conditional}, to construct two novel tests for evaluating the confounder-bias in predictive models.
 The \emph{full confounder test} probes whether the model's predictive performance can be attributed exclusively to the confounder.
 The \emph{partial confounder test} investigates whether the model utilizes any confounder-variance, when controlled for the target variable.
 Both tests require only the target variable, the model predictions and the putative confounder as input, thus, they can be performed with a negligible extra computational cost (re-fitting the model is not required).
 The tests set no assumption about the distribution of the model predictions.
-The robustness of the type I error control and the statistical power of both tests are evaluated with simulated data (assuming non-normality).
-The proposed tests are then applied on functional brain connectivity data to provide evidence of motion- and center-bias in a model trained on the Autism Brain Imaging Data Exchange (ABIDE) dataset \citep{di2014autism} and to evaluate the age and acquisition-batch dependence of fluid intelligence predictions on data from the Human Connectome Project.
+The robustness of the type I error control and the statistical power of both tests are evaluated with simulated data (assuming non-normality and non-linearity).
+The proposed tests are then applied on functional brain connectivity data to provide evidence of motion- and center-bias in a model trained on the Autism Brain Imaging Data Exchange (ABIDE) dataset \citep{di2014autism} and to evaluate the age and acquisition-batch dependence of fluid intelligence predictions on data from the Human Connectome Project \citep{van2013wu}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Methods}
 
 \subsection{Notation and Background}
 
-In a predictive modelling setting, let $\y$ denote the target variable, $\yhat$ denote model output, i.e. the predictions for $\y$ and let $\c$ denote a variable which is considered as a confounder (see Fig. \ref{fig:schematic}B). Let us assume, furthermore, that $\y$, $\yhat$ and $\c$ consist of independent and identically distributed (IID) data points $(y_i, \hat{y}_i, c_i) \in Y \times \\hat{Y} \times C$ for $i=1, \dots , n$ so that $\y=(y_1, \dots ,y_n)$, $\yhat=(\hat{y}_1, \dots, \hat{y}_n)$ and $\c=(c_1, \dots, c_n)$. 
+In a predictive modelling setting, let $\y$ denote the target variable, $\yhat$ denote model output, i.e. the predictions for $\y$ and let $\c$ denote a variable which is considered as a confounder (see Fig. \ref{fig:schematic}B). Let us assume, furthermore, that $\y$, $\yhat$ and $\c$ consist of independent and identically distributed (IID) data points $(y_i, \hat{y}_i, c_i) \in Y \times \hat{Y} \times C$ for $i=1, \dots , n$ so that $\y=(y_1, \dots ,y_n)$, $\yhat=(\hat{y}_1, \dots, \hat{y}_n)$ and $\c=(c_1, \dots, c_n)$. 
 
 Depending on the research question, the direct influence of $\c$ on the model predictions $\yhat$ is subject to be kept at a negligible level or it is to be proven that, at least, the model is not completely driven by $\c$.
 
-Obviously, a strong association between $\yhat$ and $\c$ might indicate that the model is biased; it's predictions are driven by the confounder rather than information about the target variable.
+Obviously, a strong association between $\yhat$ and $\c$ might indicate that the model is biased; its predictions are driven by the confounder rather than information about the target variable.
 Testing unconditional independence ($\yhat \independent \c$) between $\yhat$ and $\c$ (or any of the $\y$, $\yhat$, $\c$ variables) is, however, insufficient for the proper characterization of confounder-bias in predictive modelling.
-For instance, even if $\yhat \independent \c$ is false, $\yhat$ might be only marginally dependent on $\c$, due to the dependence of both on $\y$. In other words, if the target variable $\y$ is significantly associated to the confounder variable $\c$, a model that is completely blind to $\c$ (and, therefore, unbiased) might still provide outputs $\yhat$ that are significantly associated with $\c$.
+For instance, even if $\yhat \independent \c$ is false, $\yhat$ might be only marginally dependent on $\c$, due to the dependence of both on $\y$. In other words, if the target variable $\y$ is significantly associated to the confounder variable $\c$, a model that is completely blind to $\c$ (i.e not confounded) might still provide outputs $\yhat$ that are significantly associated with $\c$.
 
 \subsubsection*{Conditional independence for testing confounder bias}
 
-Instead of focusing on the unconditional independence between the confounder and the predictions, we shall consider the \emph{conditionally independence} between $\yhat$ and $\c$ given $\y$ (written as $\yhat \independent \c | \y$) which, by definition  \citep{dawid1979conditional}, means that $\mathbb{P}(\yhat, \c|\y) = \mathbb{P}(\yhat|\y)\mathbb{P}(\c|\y)$. The statistical test with this null hypothesis will be referred to as the \emph{partial confounder test}.
+Instead of focusing on the unconditional independence between the confounder and the predictions, we shall consider the \emph{conditional independence} between $\yhat$ and $\c$ given $\y$ (written as $\yhat \independent \c | \y$) which, by definition  \citep{dawid1979conditional}, means that $\mathbb{P}(\yhat, \c|\y) = \mathbb{P}(\yhat|\y)\mathbb{P}(\c|\y)$. The statistical test with this null hypothesis will be referred to as the \emph{partial confounder test}.
 
-Alternatively, one might be also interested in testing $\yhat \independent \y | \c$. We will refer to the corresponding test as the \emph{full confounder test}.
+Alternatively, one might also be interested in testing $\yhat \independent \y | \c$. We will refer to the corresponding test as the \emph{full confounder test}.
 
  Conditional independence - in its general form - lies at the heart of several fundamental concepts in statistics and  plays an increasingly important role in various fields of applied statistics, particularly in biomedical applications \citep{spirtes2000causation, peters2016causal, fiedler2011mediation, candes2016panning}. Recently, \cite{shah2020hardness} have raised important concerns regarding conditional independence testing.
- Their "no free lunch" theorem implies that, without placing some assumptions on the joint distribution of $(\y, \yhat, \c)$, conditional independence testing is effectively impossible. In other words, neither the full nor the partial confounder tests can be constructed so that - for all distributions - they provides a valid type I error control and, at the same time, a non-trivial statistical power.
+ Their "no free lunch" theorem implies that, without placing some assumptions on the joint distribution of $(\y, \yhat, \c)$, conditional independence testing is effectively impossible. In other words, neither the full nor the partial confounder tests can be constructed so that - for all distributions - they provide a valid type I error control and, at the same time, a non-trivial statistical power.
 
-This result is in strong contrast to unconditional independence testing - where permutation tests  \citep{pitman1937significance, fisher1942189}, provide a general, distribution-free solution - and it has important implications for confounder testing in predictive modelling where the distribution of the model outputs, depending on the applied machine learning model, is unknown and often heavily non-normal.
+This result stands in strong contrast to unconditional independence testing - where permutation tests  \citep{pitman1937significance, fisher1942189}, provide a general, distribution-free solution - and it has important implications for confounder testing in predictive modelling where the distribution of the model outputs, depending on the applied machine learning model, is unknown and often heavily non-normal.
 
-Even if constructing fully non-parametric confounder tests was proven to be impossible, as demonstrated by \citep{candes2016panning} and \cite{berrett2020conditional}, valid and powerful conditional independence tests can be constructed with inputting distributional information about only two (out of the three) variables.
-Specifically, the conditional permutation test (CPT) of Berret and colleagues samples from a non-uniform distribution over the set of possible permutations $\pi$ of one of the variables, based on its conditional distribution of the other variable. Thereby, it incorporates the information available on the conditional distribution of interest into the permutation-based inference in a statistically valid manner.
+One of the trivial candidate for the task, partial correlation, for instance assumes that all involved variables are multivariate Gaussian and - as to be shown below - even its Spearman-based variant is unable to tolerate relatively small deviations from normality and linearity.
+
+Recently, \cite{candes2016panning} and \cite{berrett2020conditional} have demonstrated that valid and powerful conditional independence tests can be constructed with inputting distributional information about only two (out of the three) variables.
+Specifically, the conditional permutation test (CPT) of Berrett and colleagues samples from a non-uniform distribution over the set of possible permutations $\pi$ of one of the variables, based on its conditional distribution of the other variable. Thereby, it incorporates the information available on the conditional distribution of interest into the permutation-based inference in a statistically valid manner. Moreover, as shown in this paper, CPT can be combined with a general additive model to handle non-linear relationships, rendering it as an appealing candidate for testing confounder effects in predictive modelling.
+
+As many related papers, the work of \cite{berrett2020conditional} was formalized as a (semi-)supervised learning approach, where $X$ is a set of predictors (features), $Y$ is the target variable and $Z$ is a potential confounder. In this setting, testing the null hypothesis $X \independent Y | Z$ aims to determine, whether the features $X$ still affect $Y$, when controlling for $Z$.
+For instance, in genome-wide association studies, CPT can be used to determine whether a particular genetic variant $X$ affects a response $Y$ such as disease status or some other phenotype, even after controlling for the rest of the genome, encoded in $Z$.
+
+In this paper, a different setting is considered, where the supervised learning model is already fitted and we are focusing on model diagnostics, by testing the triplet $(\y,\yhat, \c)$. 
+The conceptual difference between the original and the proposed application of CPT is depicted on Fig. \ref{fig:schematic}.
 
 % fig:schematic
 \begin{figure}
@@ -205,12 +214,6 @@ Specifically, the conditional permutation test (CPT) of Berret and colleagues sa
   \label{fig:schematic}
 \end{figure}
 
-
-As many related papers, the work of \cite{berrett2020conditional} was formalized as a (semi-)supervised learning approach, where $X$ is a set of predictors (features), $Y$ is the target variable and $Z$ is a potential confounder. In this setting, testing the null hypothesis $X \independent Y | Z$ aims to determine, whether the features $X$ still affect $Y$, when controlling for $Z$.
-For instance, in genome-wide association studies, CPT can be used to determine whether a particular genetic variant $X$ affects a response $Y$ such as disease status or some other phenotype, even after controlling for the rest of the genome, encoded in $Z$.
-
-In this paper, a different setting is considered, where the supervised learning model is already fitted and we are focusing on model diagnostics, by testing the triplet $(\y,\yhat, \c)$. The conceptual difference between the original and the proposed application of CPT is depicted on Fig. \ref{fig:schematic}.
-
 Within this setting, conditional independence testing and, specifically, the framework of conditional permutation testing allows investigating three different null hypotheses corresponding to the $(\y, \yhat, \c)$ triplet. As listed in Table \ref{tab:conditional-independence-cases}, testing the null hypothesis $\y \independent \yhat | \c$ (option 1, full confounder testing) investigates whether the model predictions are likely explainable solely with the confounder, i.e. whether the model is exclusively confounder-driven. Testing $\y \independent \c | \yhat$ (option 2) addresses the question whether the model captures all the variance in $c$ when predicting $y$. Testing the null hypothesis $\yhat \independent \c | \y$ (option 3, partial confounder testing) examines, whether the dependence of the model output on the confounder can likely be explained by the confounder's dependence on the target variable, i.e. whether there is any confounder bias in the model.
 
 % tab:conditional-independence-cases
@@ -285,7 +288,7 @@ where $\ell$ denotes the log-likelihood.
 
 In their Theorem 2, \cite{berrett2020conditional} verify that the resulting Markov Chain yields the desired stationary distribution, even if the number of steps is small.
 
-\subsubsection*{Gaussian conditional log-likelihood}
+\subsubsection*{Conditional log-likelihood}
 
 
 Obtaining a relatively accurate, independent estimate of $D(\cdot|\y)$ (of any shape) for CPT inference is important. Berrett and colleagues recommend to use a large independent sample to obtain the log-likelihood matrix that represents the conditional distribution $D(\cdot|Z)$. This approach might be often viable in semi-supervised learning settings where unlabelled data $(X, Z)$ are easier to obtain than labelled data $(X, Y, Z)$.
@@ -333,7 +336,7 @@ which allows interpretable, two tailed inference about confoudner-bias in predic
   Rows and columns correspond to simulations with different signal-in-prediction (y+c) and confound-to-signal values, respectively. The first row and the first column contain simulations under H0 (no confounder bias) and separated form the simulations under the alternative hypothesis with dashed line. Positive rates for the simulations under the null and alternative hypotheses can be interpreted as type I error rate and statistical power, respectively. The higher confidence limit for the type I error rates is 0.11 for each tile, with 5 tiles expected to pass it form all H0 tiles.
   The actual weights $w_{Y}$, $w_{C}$ and $w_{e}$ are depicted at the bars on top of each heatmap and color coded as shown in the legend at the bottom. Above each heatmap, the strengths of the associations of $\hat{y}$ to $Y$ and $C$, respectively, are given with $R^2$ values averaged over all simulation cases of the heatmap.
   }
-  \label{fig:sim-normal}
+  \label{fig:sim-h0-demo}
 \end{figure}
 
 

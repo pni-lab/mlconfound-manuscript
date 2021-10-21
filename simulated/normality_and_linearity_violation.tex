@@ -1,8 +1,10 @@
 \hypertarget{an-example-of-model-non-linearity-in-the-presence-of-a-linear-predictor.}{%
 \section{An example of model non-linearity in the presence of a linear
 predictor.}\label{an-example-of-model-non-linearity-in-the-presence-of-a-linear-predictor.}}
+\label{sup:nomlinviol}
 
 Notebook available on-line:
+
 https://github.com/spisakt/mlconfound\_manuscript/tree/main/simulated/normality\_and\_linearity\_violation.ipynb
 
 \begin{lstlisting}[language=Python]
@@ -37,28 +39,12 @@ for i in range(4):
     plt.show()
 \end{lstlisting}
 
-\begin{figure}
+\begin{figure}[H]
 \centering
-\includegraphics{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_0.png}
-\caption{png}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_1.png}
-\caption{png}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_2.png}
-\caption{png}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_3.png}
-\caption{png}
+\includegraphics[width=0.15\paperwidth]{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_0.png}
+\includegraphics[width=0.15\paperwidth]{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_1.png}
+\includegraphics[width=0.15\paperwidth]{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_2.png}
+\includegraphics[width=0.15\paperwidth]{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_3.png}
 \end{figure}
 
 \hypertarget{model-predictions-without-regularization}{%
@@ -77,10 +63,9 @@ model.coef_
 array([ 0.47902429,  0.00946499,  0.07378478, -0.02828672,  0.47070535])
 \end{lstlisting}
 
-\begin{figure}
+\begin{figure}[H]
 \centering
-\includegraphics{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_5_1.png}
-\caption{png}
+\includegraphics[width=0.5\paperwidth]{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_5_1.png}
 \end{figure}
 
 \hypertarget{model-predictions-with-regularization}{%
@@ -100,8 +85,7 @@ model.coef_
 array([0.09472368, 0.07472972, 0.07338482, 0.07440682, 0.09463765])
 \end{lstlisting}
 
-\begin{figure}
+\begin{figure}[H]
 \centering
-\includegraphics{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_7_1.png}
-\caption{png}
+\includegraphics[width=0.5\paperwidth]{fig/normality_and_linearity_violation_files/normality_and_linearity_violation_7_1.png}
 \end{figure}
