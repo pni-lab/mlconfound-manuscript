@@ -485,7 +485,7 @@ Violation of the normality assumptions for $\y$ and $\c$ has a negative effect o
 
 \begin{figure}[!b]
   \centering
-  \includegraphics[width=0.75\paperwidth]{fig/fig_hcp.pdf}
+  \includegraphics[width=0.75\paperwidth]{fig/fig_hcp.png}
   \caption{\textbf{Acquisition- and age-bias of fluid IQ prediction in the HCP dataset.} \\
   Scatter plots and regression lines (with 95\% confidence intervals) show the association of the observed (horizontals axis) and predicted (vertical axis) fluid intelligence scores with various confound regression strategies. Color-coding of the confounder variables (top: acquisition batch, bottom: age group, as shown by the corresponding legends) reveals confounder-bias for both acquisition and age in the models trained on the raw data. This bias is robustly detected by the proposed 'partial' confounder test ($p<0.0001$) and seems to be effectively mitigated by both feature regression and COMBAT.
   Relation between the observed ($\hat{y}$) and predicted IQ scores and the confounder variables is shown by the graphs as $R^2 values$. Both confound mitigation techniques, but especially COMBAT, improves the predictive performance of the models.
@@ -505,7 +505,7 @@ The full confounder test was highly significant ($p<0.0001$) for all models, ind
 
 \begin{figure}[!b]
   \centering
-  \includegraphics[width=0.75\paperwidth]{fig/fig_abide.pdf}
+  \includegraphics[width=0.75\paperwidth]{fig/fig_abide.png}
   \caption{\textbf{Center- and motion age-bias of ASD diagnosis prediction in the ABIDE dataset.} \\
   Boxplots and points show the predicted class probabilities (0: HC, 1: ASD), separately for the HC and ASD groups. In the top panel, predictions are plotted for each center separately and color indicates the true diagnosis (DX). AT the bottom plot, color indicates the normalized index of in-scanner motion (based on mean framewise displacement, mean FD). The proposed confounder test reveals significant center- and motion-bias in the model trained on the raw data (p<0.0001). While center bias seems to be effectively mitigated by feature regression, the same technique fails to remove motion-bias (actually introduces a paradoxical negative bias). COMBAT seems to effectively remove the effect of both confounders on the predictions and improves the predictive performance of the models in both cases.
   Relation between the observed ($\hat{y}$) and predicted IQ scores and the confounder variables is shown by the graphs as $R^2 values$. Solid red line between the confounder and the prediction means significant confounder bias, whereas blue dashed line denotes that confounder testing provided no evidence for bias. P-values are determined with the 'partial confound test'. P-values of the 'full' confound test were all less then 0.0001, i.e. confounder did not fully drive prediction for any of the models.
@@ -531,25 +531,25 @@ The full confounder test was highly significant ($p<0.0001$) for all models, exc
 \begin{tabular}{lll|ll|ll|ll|ll} 
 dataset & conf. & method & $R^2_{y, c}$ & $p_{y, c}$ & $R^2_{\hat{y}, c}$ & $p_{\hat{y}, c}$ & $R^2_{\hat{y}, y}$ & $p_{\hat{y}, y}$ & partial test & full test  \\
 \hline
-HCP & acq.  & raw      & 0.032 & <0.001 & 0.071 & <0.001  & 0.095 & <0.001 & <0.0001 & <0.0001 \\
-    &              & f.reg.    & & & 0.011 & 0.477 & 0.105  & <0.001  & 0.72 & <0.0001 \\
-    &              & COMBAT    & & &0.013 & 0.4 & 0.122  & <0.001  & 0.88 & <0.0001\\
+HCP & acq.  & raw      & 0.032 & <0.001 & 0.071 & <0.001  & 0.095 & <0.001 & \textbf{<0.0001} & <0.0001 \\
+    &              & f.reg.    & & & 0.011 & 0.477 & 0.105  & <0.001  & 0.73 & <0.0001 \\
+    &              & COMBAT    & & &0.013 & 0.4 & 0.122  & <0.001  & 0.65 & <0.0001\\
 \hline
-    & age   & raw       & 0.011 & 0.001  & 0.034 & <0.001  & 0.095  & <0.001 & <0.0001 & <0.0001 \\
-    &       & f.reg.    & & &0.004 & 0.052 & 0.114  & <0.001  & 0.23 & <0.0001 \\
-    &       & COMBAT    & & &0.005 & 0.048 & 0.121 & <0.001 & 0.17 & <0.0001 \\
+    & age   & raw       & 0.011 & 0.001  & 0.034 & <0.001  & 0.095  & <0.001 & \textbf{<0.0001} & <0.0001 \\
+    &       & f.reg.    & & &0.004 & 0.052 & 0.114  & <0.001  & 0.2 & <0.0001 \\
+    &       & COMBAT    & & &0.005 & 0.048 & 0.121 & <0.001 & 0.16 & <0.0001 \\
 \hline
-ABIDE   & center   & raw       & 0.019  & <0.001 &  0.169 & <0.001& 0.126     & <0.001 & <0.0001 & <0.0001 \\
-        &          & f.reg.    &  & &  0.042 & 0.007 & 0.173     & <0.001 & 0.04 & <0.0001 \\
-        &          & COMBAT    &  & &  0.05 & 0.001 & 0.17     & <0.001 & 0.01 & <0.0001 \\
+ABIDE   & center   & raw       & 0.019  & <0.001 &  0.169 & <0.001& 0.126     & <0.001 & \textbf{<0.0001} & <0.0001 \\
+        &          & f.reg.    &  & &  0.042 & 0.007 & 0.173     & <0.001 & \textbf{0.04} & <0.0001 \\
+        &          & COMBAT    &  & &  0.05 & 0.001 & 0.17     & <0.001 & \textbf{0.009} & <0.0001 \\
 \hline
-        & motion   & raw       & 0.028 & <0.001 & 0.111    &  <0.001 & 0.126    & <0.001 & <0.0001& <0.0001 \\
-        &          & f.reg.    & & & 0.359    & <0.001  & 0.02   & <0.001 & <0.0001 & 0.09 \\
-        &          & COMBAT    & & &  0.002 & 0.19 & 0.111     & <0.001 & 0.64 & <0.0001 \\
+        & motion   & raw       & 0.028 & <0.001 & 0.111    &  <0.001 & 0.126    & <0.001 & \textbf{<0.0001} & <0.0001 \\
+        &          & f.reg.    & & & 0.359    & <0.001  & 0.02   & <0.001 & \textbf{<0.0001} & 0.1 \\
+        &          & COMBAT    & & &  0.002 & 0.19 & 0.111     & <0.001 & 0.59 & <0.0001 \\
     
 
 \end{tabular}
-\caption{\label{tab:unconditional-pvals} Unconditioned coefficients-of-determination, the corresponding p-values and the p-values of the partial and full confounder tests for all investigated models.}
+\caption{\label{tab:unconditional-pvals} Unconditioned coefficients-of-determination, the corresponding p-values and the p-values of the partial and full confounder tests for all investigated models. Significant confoudner bias is denoted by bold font.}
 \end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
