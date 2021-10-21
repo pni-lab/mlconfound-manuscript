@@ -35,25 +35,25 @@ for i in range(4):
 
 
     
-![png](normality_and_linearity_violation_files/normality_and_linearity_violation_3_0.png)
+![png](../fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_0.png)
     
 
 
 
     
-![png](normality_and_linearity_violation_files/normality_and_linearity_violation_3_1.png)
+![png](../fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_1.png)
     
 
 
 
     
-![png](normality_and_linearity_violation_files/normality_and_linearity_violation_3_2.png)
+![png](../fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_2.png)
     
 
 
 
     
-![png](normality_and_linearity_violation_files/normality_and_linearity_violation_3_3.png)
+![png](../fig/normality_and_linearity_violation_files/normality_and_linearity_violation_3_3.png)
     
 
 
@@ -65,7 +65,6 @@ model = Ridge(alpha=0)
 model.fit(y=y, X=X)
 yhat = model.predict(X)
 sns.scatterplot(x=y, y=yhat, alpha=0.3)
-#sns.lineplot(x=y, y=y, linestyle="--")
 model.coef_
 ```
 
@@ -78,7 +77,7 @@ model.coef_
 
 
     
-![png](normality_and_linearity_violation_files/normality_and_linearity_violation_5_1.png)
+![png](../fig/normality_and_linearity_violation_files/normality_and_linearity_violation_5_1.png)
     
 
 
@@ -90,8 +89,9 @@ model = Ridge(alpha=2000)
 model.fit(y=y, X=X)
 yhat = model.predict(X)
 sns.scatterplot(x=y, y=yhat, alpha=0.3)
-#sns.lineplot(x=y, y=y, linestyle="--")
 model.coef_
+
+
 ```
 
 
@@ -103,11 +103,6 @@ model.coef_
 
 
     
-![png](normality_and_linearity_violation_files/normality_and_linearity_violation_7_1.png)
+![png](../fig/normality_and_linearity_violation_files/normality_and_linearity_violation_7_1.png)
     
 
-
-
-```python
-
-```
