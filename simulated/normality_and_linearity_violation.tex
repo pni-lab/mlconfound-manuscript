@@ -5,37 +5,41 @@ predictor.}\label{an-example-of-model-non-linearity-in-the-presence-of-a-linear-
 Notebook available on-line:
 https://github.com/spisakt/mlconfound\_manuscript/tree/main/simulated/normality\_and\_linearity\_violation.ipynb
 
-\begin{lstlisting}[language=Python]
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-from sklearn.linear_model import Ridge
-sns.set(rc={"figure.figsize":(6, 2)})
-sns.set_style("white")
-\end{lstlisting}
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ numpy }\ImportTok{as}\NormalTok{ np}
+\ImportTok{import}\NormalTok{ seaborn }\ImportTok{as}\NormalTok{ sns}
+\ImportTok{import}\NormalTok{ matplotlib.pyplot }\ImportTok{as}\NormalTok{ plt}
+\ImportTok{from}\NormalTok{ sklearn.linear_model }\ImportTok{import}\NormalTok{ Ridge}
+\NormalTok{sns.}\BuiltInTok{set}\NormalTok{(rc}\OperatorTok{=}\NormalTok{\{}\StringTok{"figure.figsize"}\NormalTok{:(}\DecValTok{6}\NormalTok{, }\DecValTok{2}\NormalTok{)\})}
+\NormalTok{sns.set_style(}\StringTok{"white"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \hypertarget{five-features-one-linear-four-sigmoid}{%
 \subsubsection{Five features: one linear, four
 sigmoid}\label{five-features-one-linear-four-sigmoid}}
 
-\begin{lstlisting}[language=Python]
-n=300
-p=5
-rng = np.random.default_rng(42)
-y = np.arange(n)
-y = (y - y.mean())/y.std()
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{n}\OperatorTok{=}\DecValTok{300}
+\NormalTok{p}\OperatorTok{=}\DecValTok{5}
+\NormalTok{rng }\OperatorTok{=}\NormalTok{ np.random.default_rng(}\DecValTok{42}\NormalTok{)}
+\NormalTok{y }\OperatorTok{=}\NormalTok{ np.arange(n)}
+\NormalTok{y }\OperatorTok{=}\NormalTok{ (y }\OperatorTok{-}\NormalTok{ y.mean())}\OperatorTok{/}\NormalTok{y.std()}
 
-X_true = np.repeat(y, p).reshape(n,p)
-for i in range(1,4):
-    X_true[:,i] = np.tanh(X_true[:,i]*2)
+\NormalTok{X_true }\OperatorTok{=}\NormalTok{ np.repeat(y, p).reshape(n,p)}
+\ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{):}
+\NormalTok{    X_true[:,i] }\OperatorTok{=}\NormalTok{ np.tanh(X_true[:,i]}\OperatorTok{*}\DecValTok{2}\NormalTok{)}
 
-X=X_true + rng.normal(0,0.1, (n,p))
+\NormalTok{X}\OperatorTok{=}\NormalTok{X_true }\OperatorTok{+}\NormalTok{ rng.normal(}\DecValTok{0}\NormalTok{,}\FloatTok{0.1}\NormalTok{, (n,p))}
 
-for i in range(4):
-    sns.lineplot(x=y, y=X_true[:,i])
-    sns.scatterplot(x=y, y=X[:,i])
-    plt.show()
-\end{lstlisting}
+\ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\DecValTok{4}\NormalTok{):}
+\NormalTok{    sns.lineplot(x}\OperatorTok{=}\NormalTok{y, y}\OperatorTok{=}\NormalTok{X_true[:,i])}
+\NormalTok{    sns.scatterplot(x}\OperatorTok{=}\NormalTok{y, y}\OperatorTok{=}\NormalTok{X[:,i])}
+\NormalTok{    plt.show()}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{figure}
 \centering
@@ -65,18 +69,20 @@ for i in range(4):
 \subsubsection{\texorpdfstring{Model predictions \textbf{without}
 regularization}{Model predictions without regularization}}\label{model-predictions-without-regularization}}
 
-\begin{lstlisting}[language=Python]
-model = Ridge(alpha=0)
-model.fit(y=y, X=X)
-yhat = model.predict(X)
-sns.scatterplot(x=y, y=yhat, alpha=0.3)
-#sns.lineplot(x=y, y=y, linestyle="--")
-model.coef_
-\end{lstlisting}
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model }\OperatorTok{=}\NormalTok{ Ridge(alpha}\OperatorTok{=}\DecValTok{0}\NormalTok{)}
+\NormalTok{model.fit(y}\OperatorTok{=}\NormalTok{y, X}\OperatorTok{=}\NormalTok{X)}
+\NormalTok{yhat }\OperatorTok{=}\NormalTok{ model.predict(X)}
+\NormalTok{sns.scatterplot(x}\OperatorTok{=}\NormalTok{y, y}\OperatorTok{=}\NormalTok{yhat, alpha}\OperatorTok{=}\FloatTok{0.3}\NormalTok{)}
+\CommentTok{#sns.lineplot(x=y, y=y, linestyle="--")}
+\NormalTok{model.coef_}
+\end{Highlighting}
+\end{Shaded}
 
-\begin{lstlisting}
+\begin{verbatim}
 array([ 0.47902429,  0.00946499,  0.07378478, -0.02828672,  0.47070535])
-\end{lstlisting}
+\end{verbatim}
 
 \begin{figure}
 \centering
@@ -88,18 +94,20 @@ array([ 0.47902429,  0.00946499,  0.07378478, -0.02828672,  0.47070535])
 \subsubsection{\texorpdfstring{Model predictions \textbf{with}
 regularization}{Model predictions with regularization}}\label{model-predictions-with-regularization}}
 
-\begin{lstlisting}[language=Python]
-model = Ridge(alpha=2000)
-model.fit(y=y, X=X)
-yhat = model.predict(X)
-sns.scatterplot(x=y, y=yhat, alpha=0.3)
-#sns.lineplot(x=y, y=y, linestyle="--")
-model.coef_
-\end{lstlisting}
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model }\OperatorTok{=}\NormalTok{ Ridge(alpha}\OperatorTok{=}\DecValTok{2000}\NormalTok{)}
+\NormalTok{model.fit(y}\OperatorTok{=}\NormalTok{y, X}\OperatorTok{=}\NormalTok{X)}
+\NormalTok{yhat }\OperatorTok{=}\NormalTok{ model.predict(X)}
+\NormalTok{sns.scatterplot(x}\OperatorTok{=}\NormalTok{y, y}\OperatorTok{=}\NormalTok{yhat, alpha}\OperatorTok{=}\FloatTok{0.3}\NormalTok{)}
+\CommentTok{#sns.lineplot(x=y, y=y, linestyle="--")}
+\NormalTok{model.coef_}
+\end{Highlighting}
+\end{Shaded}
 
-\begin{lstlisting}
+\begin{verbatim}
 array([0.09472368, 0.07472972, 0.07338482, 0.07440682, 0.09463765])
-\end{lstlisting}
+\end{verbatim}
 
 \begin{figure}
 \centering
@@ -107,6 +115,9 @@ array([0.09472368, 0.07472972, 0.07338482, 0.07440682, 0.09463765])
 \caption{png}
 \end{figure}
 
-\begin{lstlisting}[language=Python]
-\end{lstlisting}
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\end{Highlighting}
+\end{Shaded}
 
