@@ -33,9 +33,9 @@ python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1e1_linear.csv --
 
 python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1.05e3_linear.csv --mode=partial --delta=1.05 --epsilon=3 --nonlin-trf=identity --repetitions=100
 
-python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1.05e3_linear.csv --mode=partial --delta=1.5 --epsilon=5 --nonlin-trf=identity --repetitions=100
+python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1.5e5_linear.csv --mode=partial --delta=1.5 --epsilon=5 --nonlin-trf=identity --repetitions=100
 
-python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1.05e3_linear.csv --mode=partial --delta=5 --epsilon=10 --nonlin-trf=identity --repetitions=100
+python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d5e10_linear.csv --mode=partial --delta=5 --epsilon=10 --nonlin-trf=identity --repetitions=100
 
 
 
@@ -45,8 +45,8 @@ python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1e1_sigmoid.csv -
 
 python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1.05e3_sigmoid.csv --mode=partial --delta=1.05 --epsilon=3 --nonlin-trf=sigmoid --repetitions=100
 
-python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1.05e3_sigmoid.csv --mode=partial --delta=1.5 --epsilon=5 --nonlin-trf=sigmoid --repetitions=100
+python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1.5e5_sigmoid.csv --mode=partial --delta=1.5 --epsilon=5 --nonlin-trf=sigmoid --repetitions=100
 
-python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1.05e3_sigmoid.csv --mode=partial --delta=5 --epsilon=10 --nonlin-trf=sigmoid --repetitions=100
+python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d5e10_sigmoid.csv --mode=partial --delta=5 --epsilon=10 --nonlin-trf=sigmoid --repetitions=100
 
 
