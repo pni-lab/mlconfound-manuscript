@@ -49,4 +49,6 @@ python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d1.5e5_sigmoid.csv
 
 python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d5e10_sigmoid.csv --mode=partial --delta=5 --epsilon=10 --nonlin-trf=sigmoid --repetitions=100
 
+python3 $DIR/simulate_H1.py --out=$DIR/results/h1_ccc_partial_d01e0_sigmoid.csv --mode=partial --delta=0.1 --epsilon=0 --nonlin-trf=sigmoid --repetitions=100
+
 
