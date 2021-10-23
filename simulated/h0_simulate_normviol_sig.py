@@ -1,14 +1,8 @@
-import argparse
-import itertools
 import numpy as np
 import pandas as pd
-import pingouin as pg
-from tqdm import tqdm
 from joblib import Parallel, delayed
-import os
-import sys
 from mlconfound.stats import full_confound_test, partial_confound_test
-from mlconfound.simulate import simulate_y_c_yhat, identity, polynomial, sigmoid
+from mlconfound.simulate import simulate_y_c_yhat, polynomial, sigmoid
 
 
 def run(e, d, w_yc, wyyhat, w_cyhat, Ns):
@@ -22,7 +16,7 @@ def run(e, d, w_yc, wyyhat, w_cyhat, Ns):
                                            random_state=_random_state,
                                            delta=d,
                                            epsilon=e,
-                                           nonlin_trf_fun=identity)
+                                           nonlin_trf_fun=sigmoid)
 
             res_gam = partial_confound_test(y, yhat, c,
                                             cat_y=False,
@@ -65,7 +59,7 @@ d = 0.1
 e = 2
 w_yc = 0.1
 w_yyhat = 0.1
-w_cyhat = 0.06
+w_cyhat = 0
 Ns = [50, 100, 500, 1000]
 
 res[0, :] = run(e, d, w_yc, w_yyhat, w_cyhat, Ns)
@@ -76,7 +70,7 @@ d = 1
 e = 0
 w_yc = 0.33
 w_yyhat = 0.33
-w_cyhat = 0.2
+w_cyhat = 0
 Ns = [50, 100, 500, 1000]
 
 res[1, :] = run(e, d, w_yc, w_yyhat, w_cyhat, Ns)
@@ -87,7 +81,7 @@ d = 1.05
 e = -3
 w_yc = 4
 w_yyhat = 4
-w_cyhat = 2.5
+w_cyhat = 0
 Ns = [50, 100, 500, 1000]
 
 res[2, :] = run(e, d, w_yc, w_yyhat, w_cyhat, Ns)
@@ -98,7 +92,7 @@ d = 1.5
 e = -5
 w_yc = 55
 w_yyhat = 55
-w_cyhat = 40
+w_cyhat = 0
 Ns = [50, 100, 500, 1000]
 
 res[3, :] = run(e, d, w_yc, w_yyhat, w_cyhat, Ns)
@@ -110,7 +104,7 @@ d = 5
 e = -10
 w_yc = 3000000
 w_yyhat = 3000000
-w_cyhat = 1000000
+w_cyhat = 0
 Ns = [50, 100, 500, 1000]
 
 res[4, :] = run(e, d, w_yc, w_yyhat, w_cyhat, Ns)
@@ -120,4 +114,4 @@ results = pd.DataFrame(res, columns=['n=50', 'n=100', 'n=500', 'n=1000'], index=
                                                                                  'e=1.05,d=-3',
                                                                                  'e=1.5,d=-5',
                                                                                  'e=5,d=-10'])
-results.to_csv('simulated/results/h1_simulate_normviol_lin.csv')
+results.to_csv('simulated/results/h0_simulate_normviol_sig.csv')

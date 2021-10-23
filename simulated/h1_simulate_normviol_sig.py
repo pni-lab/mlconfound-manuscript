@@ -1,14 +1,9 @@
-import argparse
-import itertools
+
 import numpy as np
 import pandas as pd
-import pingouin as pg
-from tqdm import tqdm
 from joblib import Parallel, delayed
-import os
-import sys
 from mlconfound.stats import full_confound_test, partial_confound_test
-from mlconfound.simulate import simulate_y_c_yhat, identity, polynomial, sigmoid
+from mlconfound.simulate import simulate_y_c_yhat, polynomial, sigmoid
 
 
 def run(e, d, w_yc, wyyhat, w_cyhat, Ns):
@@ -22,7 +17,7 @@ def run(e, d, w_yc, wyyhat, w_cyhat, Ns):
                                            random_state=_random_state,
                                            delta=d,
                                            epsilon=e,
-                                           nonlin_trf_fun=identity)
+                                           nonlin_trf_fun=sigmoid)
 
             res_gam = partial_confound_test(y, yhat, c,
                                             cat_y=False,
@@ -120,4 +115,4 @@ results = pd.DataFrame(res, columns=['n=50', 'n=100', 'n=500', 'n=1000'], index=
                                                                                  'e=1.05,d=-3',
                                                                                  'e=1.5,d=-5',
                                                                                  'e=5,d=-10'])
-results.to_csv('simulated/results/h1_simulate_normviol_lin.csv')
+results.to_csv('simulated/results/h1_simulate_normviol_sig.csv')
