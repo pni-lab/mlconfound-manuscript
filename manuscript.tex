@@ -295,17 +295,19 @@ Obtaining a relatively accurate, independent estimate of $D(\cdot|\y)$ (of any s
 
 \begin{equation}
     \label{eq:linreg}
-    \c = \alpha + \beta f(\y) + \boldsymbol{e}
+    \c = \alpha + \beta \y + \boldsymbol{e}
 \end{equation}
 
-As the linear regression-based method, obviously, does not handle non-linear relationships I propose to fit a generalized additive model (GAM), instead:
+As the linear regression-based method, obviously, does not handle non-linear relationships I propose to fit a generalized additive model (GAM) \citep{hastie1987generalized}, instead:
 
 \begin{equation}
     \label{eq:gam}
     \c = \alpha + \beta f(\y) + \boldsymbol{e}
 \end{equation}
 
-where the feature functions $f$ is built using penalized B splines, which allow us to automatically model non-linear relationships without having to manually try out many different transformations on each variable.
+where the feature functions $f$ is built using penalized B-splines, which allow us to automatically model non-linear relationships without having to manually try out many different transformations on each variable.
+
+Smoothness of the GAM model is optimized with a grid-search by picking the model with the lowest generalized cross-validation score form the models defined by the default parameters as implemented in PyGAM \citep{serven2018generalized}.
 
 If we write $\boldsymbol{\mu} = \alpha + \beta f(\y)$ and $\sigma$ denotes the standard deviation of the residual $\boldsymbol{e}$, then the conditional distribution of interest can be assumed to be normal with the parameters:
 
@@ -336,10 +338,8 @@ which allows interpretable, two tailed inference about confoudner-bias in predic
 \begin{figure}[!b]
   \centering
   \includegraphics[width=0.75\paperwidth]{fig/sim_h0_demo.eps}
-  \caption{\textbf{Type-I error control and power of the conditional permutation-based confound testing for predictive modelling in normally distributed simulated data}. \\
-  Heatmaps depict positive rates (ratio of p-values lower than 0.05, color coded as shown by the palette at the bottom) in various simulations settings (100 simulations per tile) with different covariance between the target and the confounder (given as $R^2_{y,c}$ on the vertical axes of the heatmaps), for different sample sizes (N, horizontal axes).
-  Rows and columns correspond to simulations with different signal-in-prediction (y+c) and confound-to-signal values, respectively. The first row and the first column contain simulations under H0 (no confounder bias) and separated form the simulations under the alternative hypothesis with dashed line. Positive rates for the simulations under the null and alternative hypotheses can be interpreted as type I error rate and statistical power, respectively. The higher confidence limit for the type I error rates is 0.11 for each tile, with 5 tiles expected to pass it form all H0 tiles.
-  The actual weights $w_{Y}$, $w_{C}$ and $w_{e}$ are depicted at the bars on top of each heatmap and color coded as shown in the legend at the bottom. Above each heatmap, the strengths of the associations of $\hat{y}$ to $Y$ and $C$, respectively, are given with $R^2$ values averaged over all simulation cases of the heatmap.
+  \caption{\textbf{Type-I error control of partial Spearman correlation, linear and GAM-based conditional permutation test}. \\
+  Type-I error control was investigated in three example cases: normal conditional distribution with linear dependency (first row), non-normal conditional distribution with linear dependency (second row) and normal conditional distribution with non-normal (sigmoid) dependency (third row). Non-normal conditional distribution on the second plot is illustrated with blue density diagrams and dependency is depicted with blue dotted lines an all plots. False positive rates for the three investigated tests is shown in heatmaps, with darker red meaning higher values. The upper limit for the binomial confidence interval corresponding to $alpha=0.05$ is 0.065. Values below this threshold indicate a valid type-I error control and colored white.
   }
   \label{fig:sim-h0-demo}
 \end{figure}
@@ -403,19 +403,17 @@ These simulation cases are visualized (with $w_{yc} = w_{y\hat{y}} = 2$) on the 
 
 Both for the partial and the full confound test, 100 repetitions were performed of all combination of the following parameter values: 
 \begin{itemize}
-    \item covariance of $\c$ and $\y$: $\sigma \in \{0, 0.2, 0.4, 0.6, 0.8\}$
-    \item confound-to-target: $w_{c/y} \in \{0, 0.1, 0.3, 0.5, 1\}$
-    \item signal-in-prediction: $w_{c+y} \in \{0, 0.3, 0.6, 0.9\}$
-    \item sample size: $n \in \{50, 100, 500, 1000\}$
+    \item $w_{yc} \in \{0.5, 1, 2, 3\}$
+    \item $w_{y\hat{y}} \in \{0.5, 1, 2, 3\}$
+    \item $w_{c\hat{y}} \in \{0, 0.2, 0.4, 0.6\}$
+    \item $n \in \{50, 100, 500, 1000\}$
+    \item linear and sigmoid dependence
+    \item normal conditional distribution
 \end{itemize}
 
-For testing 'full' confounder bias, identical parameters were used, except that instead of the 'confound-to-target' parameter $ w_{c/y}$ we used the 'target-to-confound' parameter $ w_{y/c} = w_y/ w_c $, but with the same parameter values $w_{y/c} \in \{0, 0.1, 0.3, 0.5, 1\}$.
+The 'partial' and 'full' confound tests, as implemented in version 0.13.0 of the package \emph{'mlconfound'} were run with default parameters, that is 1000 permutations and 50 Markov-chain Monte-Carlo steps to generate the conditioned permutations and by implying categorical variables, where needed.
 
-Next to the above described normally distributed simulation scenario, four analogous, but \emph{sinh-arcsinh} transformed scenarios were also investigated, with $\delta \in \{1, 1.05, 1.5, 5\}$ $\epsilon \in \{1, 3, 5, 10\}$ 
-
-The 'partial' and 'full' confound tests, as implemented in version 0.9.0 of the package \emph{'mlconfound'} were run with default parameters, that is 1000 permutations and 50 Markov-chain Monte-Carlo steps to generate the conditioned permutations and by implying categorical variables, where needed.
-
-Analysis code used for simulations is available\footnote{https://github.com/pni-lab/mlconfound/blob/master/validation/simulation.py} in the github repository of the 'mlconfound' package.
+All analysis code used for the simulations is available on github\footnote{https://github.com/spisakt/mlconfound_manuscript}.
 
 \subsection{Application on functional brain connectivity data}
 
@@ -478,14 +476,13 @@ The conditional permutation based 'partial' and 'full' confound tests for predic
 \begin{figure}[!b]
   \centering
 
-  \includegraphics[width=0.40\paperwidth]{fig/sim_non-norm.eps}
-  \caption{\textbf{Robustness of conditional permutation based confound testing to the violation of normality assumptions for $\y$ and $\c$.} \\
-  Simulations included variables with five different degrees of non-normality (A), as introduced with various $\delta$ and $\epsilon$ values of the \emph{sinh-arcsinh} transformation, from normal (left) to severely skewed and heavy tailed (right). Fisher's kurtosis and skewness is given for each at the bottom of panel A. Panel (B) depicts false positive rates in the simulations under H0, separately for different signal-in-confounder ratios (here identical to $w_{y}$).
-  Vertical axis shows type I error rate. The nominal type I error rate of $alpha=0.05$ is shown with a vertical dashed line. Panel (C) shows how violation of the normality assumption affects power. Boxplots show the mean power over simulation cases, grouped by confound-to-target ratio and sample size.}
+  \includegraphics[width=0.5\paperwidth]{fig/sim_non-norm.eps}
+  \caption{\textbf{Robustness of conditional permutation based confound testing to non-normality and non-linearity.} \\
+  Simulations included variables with five different degrees of non-normality (top panel), as introduced with various $\delta$ and $\epsilon$ values of the \emph{sinh-arcsinh} transformation (yellow: normally distributed). Fisher's kurtosis and skewness is given for each distribution. False and true positive rates in the simulations under H0 and H1, respectively, for each investigated sample size (N), are depicted by barplots for both linear and sigmoid dependency structure. Upper 95\% binomial confidence interval corresponding to $alpha=0.05$ is shown with a vertical dashed line.}
   \label{fig:sim-non-normal}
 \end{figure}
 
-Simulations based on normally distributed data justified that the proposed confounder tests - in line with theory - provide a valid type I error control (For detailed results, see \ref{fig:sim-normal} for the 'partial' test on numerical data and Supplementary Figures \ref{fig:sim-ccc-full}, \ref{fig:sim-ccb-partial}, \ref{fig:sim-ccb-full}, \ref{fig:sim-bbc-partial}, \ref{fig:sim-bbc-full}, \ref{fig:sim-bbb-partial} and \ref{fig:sim-bbc-full} for the partial test on categorical data and the full tests on both numeric and categorical data). 
+Simulations based on normally distributed data justified that the proposed confounder tests - in line with theory - provide a valid type I error control (For detailed results, see \ref{fig:sim-normal} for the 'partial' test on numerical data and Supplementary Figures \ref{fig:sim-ccc-sig-partial}, \ref{fig:sim-bbb-lin-partial}, \ref{fig:sim-bbb-sig-partial}, \ref{fig:sim-ccc-sig-full}, \ref{fig:sim-bbb-lin-full}, \ref{fig:sim-bbb-sig-full}, for the partial test on categorical data and the full tests on both numeric and categorical data). 
 In case of a valid test, the expected type I error rate in the null hypothesis simulation cases (first row and first column of the figures) is less then or equal to the alpha level (0.05). The upper 95\% confidence limit for the type I error rates for one simulation case (i.e. a single tile on the figures) is 0.11 (binomial confidence intervals with 100 repetitions). 
 The results suggest, that the proposed tests are somewhat overly conservative if the model has a high predictive performance (type I error rates closer to 0 than expected).
 
