@@ -111,7 +111,7 @@ This result stands in strong contrast to unconditional independence testing - wh
 One of the trivial candidate for the task, partial correlation, for instance assumes that all involved variables are multivariate Gaussian and - as to be shown below - even its Spearman-based variant is unable to tolerate relatively small deviations from normality and linearity.
 
 Recently, \cite{candes2016panning} and \cite{berrett2020conditional} have demonstrated that valid and powerful conditional independence tests can be constructed with inputting distributional information about only two (out of the three) variables.
-Specifically, the conditional permutation test (CPT) of Berrett and colleagues samples from a non-uniform distribution over the set of possible permutations $\pi$ of one of the variables, based on its conditional distribution of the other variable. Thereby, it incorporates the information available on the conditional distribution of interest into the permutation-based inference in a statistically valid manner. Moreover, as shown in this paper, CPT can be combined with a general additive model to handle non-linear relationships, rendering it as an appealing candidate for testing confounder effects in predictive modelling.
+Specifically, the conditional permutation test (CPT) of Berrett and colleagues samples from a non-uniform distribution over the set of possible permutations $\pi$ of one of the variables, based on its conditional distribution of the other variable. Thereby, it incorporates the information available on the conditional distribution of interest into the permutation-based inference in a statistically valid manner. Moreover, as shown in this paper, CPT can be combined with a generalized additive model (GAM) to handle non-linear relationships, rendering it as an appealing candidate for testing confounder effects in predictive modelling.
 
 As many related papers, the work of \cite{berrett2020conditional} was formalized as a (semi-)supervised learning approach, where $X$ is a set of predictors (features), $Y$ is the target variable and $Z$ is a potential confounder. In this setting, testing the null hypothesis $X \independent Y | Z$ aims to determine, whether the features $X$ still affect $Y$, when controlling for $Z$.
 For instance, in genome-wide association studies, CPT can be used to determine whether a particular genetic variant $X$ affects a response $Y$ such as disease status or some other phenotype, even after controlling for the rest of the genome, encoded in $Z$.
@@ -223,18 +223,18 @@ Within this setting, conditional independence testing and, specifically, the fra
 \begin{tabular}{l|rp{60mm}|c|>{\centering\arraybackslash}m{30mm}}
  &  & H0  & assumption needed for: & no assumptions about the distribution of: \\
 \hline
-\textbf{1.} & $\y \independent \yhat | \c$ \quad  & model exclusively driven by confounder (full confounder test) & $Q(\cdot|\c)$ & $\yhat$ or $\y$ \\
+\textbf{1.} & $\y \independent \yhat | \c$ \quad  & full confounder test: model exclusively driven by confounder & $Q(\cdot|\c)$ & $\yhat$ or $\y$ \\
 %\hline
 \textbf{2.} & $\y \independent \c | \yhat$ \quad & model captures all variance in confounder (not of interest) & $Q(\cdot|\yhat)$ & $\y$ or $\c$ \\
 %\hline
-\textbf{3.} & $\yhat \independent \c | \y$  \quad &  model does not capture more confound than what is present in the target (partial test) & $Q(\cdot|\y)$ & $\yhat$ or $\c$ \\
+\textbf{3.} & $\yhat \independent \c | \y$  \quad &  partial confounder  test: model does not capture more confound than what is present in the target & $Q(\cdot|\y)$ & $\yhat$ or $\c$ \\
 \end{tabular}
 \caption{\label{tab:conditional-independence-cases} Possibilities when testing conditional independence in potentially biased predictive models. \\The table lists the three possible null hypotheses (H0), and the variables where assumption about the joint/conditional distributions is required/not required.   ($y$: prediction target, $\yhat$: predictions, $\c$: confounder variable) }
 \end{table}
 
 Option 3, i.e. partial confounder testing is typically of interest when testing confounder bias of predictive models. Option 1, i.e. full confounder testing, might be also useful in diagnostics of predictive models, especially in the exploratory phase of model construction. Option 2 seems less appealing for model diagnostics and importantly, in this case the proposed variety of the CPT framework does not allow constructing a test which is non-parametric on $\yhat$.
 
-Below, CPT is adapted for partial confounder testing (option 3). The formulation of the full confounder test (option 1) is analogous and given in Supplementary Material \ref{sup:full-test}.
+In the following section, CPT is adapted for partial confounder testing (option 3). The formulation of the full confounder test (option 1) is analogous and given in Supplementary Material \ref{sup:full-test}.
 \subsubsection*{The partial confounder test}
 
 The partial confounder test generates a null-distribution for an arbitrary predefined test statistic $T(\y,\yhat,\c)$ by sampling permutation based "copies" of $\c$,
@@ -291,18 +291,23 @@ In their Theorem 2, \cite{berrett2020conditional} verify that the resulting Mark
 \subsubsection*{Conditional log-likelihood}
 
 
-Obtaining a relatively accurate, independent estimate of $D(\cdot|\y)$ (of any shape) for CPT inference is important. Berrett and colleagues recommend to use a large independent sample to obtain the log-likelihood matrix that represents the conditional distribution $D(\cdot|Z)$. This approach might be often viable in semi-supervised learning settings where unlabelled data $(X, Z)$ are easier to obtain than labelled data $(X, Y, Z)$.
-Since in the proposed predictive modelling setting, normality might be often a reasonable assumption for $\y$ and $\c$ (but not for $\yhat$), it is possible to fall back to Gaussian assumptions and thereby eliminate the need for a large, independent sample to estimate $D(\cdot|\y)$.
-
-In case of continuous target, a linear regression model  can be fitted:
+Obtaining a relatively accurate, independent estimate of $D(\cdot|\y)$ (of any shape) for CPT inference is important. Berrett and colleagues recommend to use a large independent sample to obtain the log-likelihood matrix that represents the conditional distribution $D(\cdot|Z)$ or, alternatively, to re-use the data by fitting a least squares linear regression:
 
 \begin{equation}
     \label{eq:linreg}
-    \c = \alpha + \beta \y + \boldsymbol{e}
+    \c = \alpha + \beta f(\y) + \boldsymbol{e}
 \end{equation}
 
+As the linear regression-based method, obviously, does not handle non-linear relationships I propose to fit a generalized additive model (GAM), instead:
 
-with the assumption that the residual error follows a Gaussian distribution. If we write $\boldsymbol{\mu} = \alpha + \beta \y$ and $\sigma$ denotes the standard deviation of the residual $\boldsymbol{e}$, then the conditional distribution of interest can also be assumed to be normal with the parameters:
+\begin{equation}
+    \label{eq:gam}
+    \c = \alpha + \beta f(\y) + \boldsymbol{e}
+\end{equation}
+
+where the feature functions $f$ is built using penalized B splines, which allow us to automatically model non-linear relationships without having to manually try out many different transformations on each variable.
+
+If we write $\boldsymbol{\mu} = \alpha + \beta f(\y)$ and $\sigma$ denotes the standard deviation of the residual $\boldsymbol{e}$, then the conditional distribution of interest can be assumed to be normal with the parameters:
 
 $$ (\c|\y=y_i) \sim \mathcal{N}\{\mu_i, \sigma^2\}$$
 
@@ -310,11 +315,11 @@ and the log-likelihood, that is to be used in Eq. \ref{eq:accept-odds}, can be c
 
 $$ \ell(c_i|y_j) = - \frac{1}{2} \Big(\frac{c_i-\mu_j}{\sigma}\Big)^2 - ln(2 \pi \sigma)   $$
 
-In the case of categorical $c$, a multinomial logistic regression model can be used to obtain $D(\cdot|\y)$, with the extra assumption of non-complete separation if $y$ is also categorical (for an invertible Hessian, see e.g. \citep{bohning1992multinomial}).
+In the case of categorical $c$, a multinomial logistic regression model can be used to obtain $D(\cdot|\y)$, with the extra assumption of \emph{complete separation} if $y$ is also categorical (for an invertible Hessian, see e.g. \citep{bohning1992multinomial}).
 
-Importantly, both the linear and the multinomial logistic regression approaches guarantee that the numerator of Eq. \ref{eq-pperm} is always greater than zero and the group property for the permutations holds.
+Importantly, both the GAM-based and the multinomial logistic regression approaches guarantee that the numerator of Eq. \ref{eq-pperm} is always greater than zero and the group property for the permutations holds.
 
-Note that from the three options for conditional independence-based null hypotheses enumerated in Table \ref{tab:conditional-independence-cases}, for option 2, the proposed approach can not provide a test that is assumption-free about $yhat$, as the variable on which the independence is conditional must be always the predictor variable in Eq. \ref{eq:linreg}. However, as discussed above, this option is of low practical relevance, anyway.
+Note that from the three options for conditional independence-based null hypotheses enumerated in Table \ref{tab:conditional-independence-cases}, for option 2, the proposed approach can not provide a test that is assumption-free about $\yhat$, as the variable, on which the independence is conditional, must be always the predictor variable in Eq. \ref{eq:gam}. However, as discussed above, this option is of low practical relevance, anyway.
 Pleasingly,  the proposed Gaussian regression-based conditional likelihood estimation ensures that no assumptions on $\yhat$ have to be made for the practically relevant options 1 and 3, i.e. for the full and partial confounder tests.
 
 In theory, any predefined test statistic $T$ can be used with the proposed approach. The python package \emph{mlconfound}, implementing the proposed full and partial confoudner tests, utilizes the coefficient of determination ($R^2$ or pseudo $R^2$ in case of categorical confounder or classification \citep{starkweather2011multinomial}) as a test statistic:
@@ -342,54 +347,61 @@ which allows interpretable, two tailed inference about confoudner-bias in predic
 
 \subsection{Validation on simulated data}
 
-Using CPT to test confounder-bias in predictive modelling allows relaxing assumptions on $\yhat$ (for both the partial and the full test) but - in line with the "no free lunch" theorem, requires knowing - or putting assumptions on - the joint distribution of the other two variables ($\yhat$ and $\c$). 
-\cite{berrett2020conditional} give a detailed analysis of the robustness of their CPT approach when estimating the conditional distribution with re-using the tested data and, also, against misspecifying the conditional distribution of interest.
+Using CPT to test confounder-bias in predictive modelling allows relaxing assumptions on $\yhat$ (for both the partial and the full test) but - in line with the "no free lunch" theorem, requires knowing - or putting assumptions on - the joint distribution of the other two variables ($\y$ and $\c$). 
+\cite{berrett2020conditional} give a detailed analysis of the robustness of their CPT approach when estimating the conditional distribution with re-using the tested data via linear regression and, also, against misspecifying the conditional distribution of interest to introduce non-linearity.
 
-While their findings are largely applicable to the proposed tests, here I extend those results by performing simulations in a form that is accessible for power calculations in predictive modelling (considering various weights of the confounder and the target signals in $\yhat$ and in the case of varying levels of covariance between $\y$ and $\c$).
-Moreover, I perform a thorough investigation of the robustness of the test against the violation of normality (for both $(\y, \c)$ and $\yhat$).
+Here I extend these results by performing simulations that evaluate the GAM- and multinomial liner model-based approaches, in a form that is accessible for power calculations in predictive modelling (considering various weights of the target signal in $c$ and the confounder and the target signals in $\yhat$).
+Moreover, I investigate the robustness of the tests against the violation of normality and linearity of the conditional distributions $D(\c|\y)$ and $D(\yhat|\y)$
 
 Simulations are performed separately for the 'partial' and 'full' conditional confound tests.
 
-\subsubsection*{Gaussian Simulations}
-As  a first step, the target variable $\y$ and the confounder variable $\c$ are drawn randomly from a multivariate normal distribution:
+\subsubsection*{Simulation approach}
+As  a first step, the target variable $\y$ is drawn randomly from a normal distribution:
 
-$$ \y, \c \sim \mathcal{N}(\mu_0, \Sigma_\sigma) $$
+$$ \y \sim \mathcal{N}(0, 1) $$
 
-where $\mu_0=(0, 0)$ and the covariance matrix is given as:
-$\Sigma_\sigma = \big(\begin{smallmatrix}
-  1 & \sigma\\
-  \sigma & 1
-\end{smallmatrix}\big)$ with $\sigma$ (i.e. the covariance between $\y$ and $\c$) being a free parameter of the simulation.
+Next, the confounder signal is simulated as:
 
-Next, the simulated predicted values are constructed:
- with an additive model:
-$$ \yhat = w_y \y + w_c \c + w_e \boldsymbol{e}$$
+$$ \c \sim f_{\delta, \epsilon}(\mathcal{N}(0, 1)) + w_{yc} \quad g(\y) $$
 
-so that $w_y + w_c + w_e = 1$, where $\boldsymbol{e} \sim \mathcal{N}(0,1)$ is the noise component.
+where $f$ is a function to introduce non-normality, namely the \emph{sinh-arcsinh} transformation of \cite{jones2009sinh} defiend as:
 
-To test the implementation for categorical variables, simulated $\y$, $\yhat$ and $\c$ variables are binarized by thresholding at 0.
-
-For more straightforward interpretation and visualization of the simulation results, the 'confound-to-target' and the 'signal-in-prediction' parameters are defined as
-
-$$ w_{c/y} = w_c / w_y $$
-
-and
-
-$$ w_{c+y} = w_c + w_y $$
-
-respectively.
-
-\subsubsection*{Introducing non-normality}
-
-Non-normality is introduced by applying the \emph{sinh-arcsinh} transformation of \cite{jones2009sinh} on the simulated variables:
-
-$$\boldsymbol{x}' = sinh(\delta sinh^{-1}(\boldsymbol{x}) - \epsilon)$$
+$$f_{\delta, \epsilon}(\boldsymbol{x}) = sinh(\delta sinh^{-1}(\boldsymbol{x}) - \epsilon)$$
 
 where the parameters $\delta$ and $\epsilon$ control the kurtosis and skewness of the resulting \emph{sinh-arcsinh} distribution, with $\delta=1$ and $\epsilon=0$ producing the identity function (i.e. no non-normality introduced).
 
-\subsubsection*{Simulation cases}
+Moreover, non-linearity can be introduced with the function $g$, which can be simply the identity function (no non-linearity is introduced) or e.g. a sigmoid-shaped function, in pour case:
 
-In the simulation procedure for the 'partial' confound test, 100 repetitions were performed of all combination of the following parameter values: 
+$$ g(\boldsymbol{x}) = tanh(\boldsymbol{x}) $$
+
+
+The simulated predicted values are constructed analogously:
+
+$$ \yhat \sim f_{\delta, \epsilon}(\mathcal{N}(0, 1)) + w_{yyhat} \quad g(\y)  + w_{c\hat{y}} \quad g(\y)$$
+
+To test the implementation for categorical variables, simulated $\y$, $\yhat$ and $\c$ variables are binarized by thresholding at 0.
+
+\subsubsection*{Simulations for comparison with partial Spearman correlation and linear CPT}
+
+To demonstrate the need for the proposed GAM-based CPT approach for partial confounder testing, its validity was contrasted to partial Spearman correlation and the linear variety of CPT (based on eq. \ref{eq:linreg}, as described by \citep{berrett2020conditional}) in the following parameters:
+\begin{itemize}
+    \item sample size: $n = 1000$
+    \item $w_{c\hat{y}} = 0$ (H0 simulations only)
+    \item all combinations of:
+    \begin{itemize}
+        \item $w_{yc} \in \{0.5, 1, 2, 3\}$ and
+        \item $w_{y\hat{y}} \in \{0.5, 1, 2, 3\}$
+    \end{itemize}
+    \item non-normality ($f_{\delta = 0.1, \epsilon = 2)}$ and non-linearity (sigmoid $g$)
+\end{itemize}
+
+For each parameter combination, 1000 repetitions were performed and false positive rate was calculated as the ratio of p-values smaller than $\alpha = 0.05$.
+
+These simulation cases are visualized (with $w_{yc} = w_{y\hat{y}} = 2$) on the left of Figure \ref{fig:sim-h0-demo}.
+
+\subsubsection*{Simulations for evaluating power.}
+
+Both for the partial and the full confound test, 100 repetitions were performed of all combination of the following parameter values: 
 \begin{itemize}
     \item covariance of $\c$ and $\y$: $\sigma \in \{0, 0.2, 0.4, 0.6, 0.8\}$
     \item confound-to-target: $w_{c/y} \in \{0, 0.1, 0.3, 0.5, 1\}$
