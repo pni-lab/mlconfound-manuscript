@@ -411,15 +411,17 @@ Both for the partial and the full confound test, 100 repetitions were performed 
     \item normal conditional distribution
 \end{itemize}
 
-The 'partial' and 'full' confound tests, as implemented in version 0.13.0 of the package \emph{'mlconfound'} were run with default parameters, that is 1000 permutations and 50 Markov-chain Monte-Carlo steps to generate the conditioned permutations and by implying categorical variables, where needed.
+The 'partial' and 'full' confound tests, as implemented in version 0.20.0 of the package \emph{'mlconfound'} were run with default parameters, that is 1000 permutations and 50 Markov-chain Monte-Carlo steps to generate the conditioned permutations and by implying categorical variables, where needed.
 
-All analysis code used for the simulations is available on github\footnote{https://github.com/spisakt/mlconfound_manuscript}.
+All analysis code used for the simulations is available on github\footnote{\href{https://github.com/pni-lab/mlconfound-manuscript/tree/main/simulated}{https://github.com/pni-lab/mlconfound-manuscript/tree/main/simulated}}.
 
 \subsection{Application on functional brain connectivity data}
 
 The usefulness of the proposed confounder tests is demonstrated by applying them for predictive classification and regression models based on functional brain connectivity data, processed with different confound-mitigation approaches. 
 
-'Partial' and 'full' confound testing was performed with default parameters (10000 permutations, 50 Markov-chain Monte Carlo steps) as implemented in version 0.9.0 of the package \emph{'mlconfound'}. Unconditional dependence across the involved variables was investigated with conventional permutation test on the $R^2$ values, with 1000 permutations. 
+'Partial' and 'full' confound testing was performed with 10000 permutations and 50 Markov-chain Monte Carlo steps, as implemented in version 0.20.0 of the package \emph{'mlconfound'}. Unconditional dependence across the involved variables was investigated with conventional permutation test on the $R^2$ values, with 1000 permutations. 
+
+All empirical analyses are available as jupyter notebooks on github\footnote{\href{https://github.com/pni-lab/mlconfound-manuscript/tree/main/empirical}{https://github.com/pni-lab/mlconfound-manuscript/tree/main/empirical}}.
 
 \subsubsection*{HCP: testing age- and acquisition batch-bias in fluid intelligence prediction}
 
@@ -432,8 +434,6 @@ The feature mitigation strategies were separately applied for acquisition batch 
 
 The total of 5 types of features (raw, regressing out acquisition batch, regressing out age group, COMBAT with acquisition batch, COMBAT with age group) were independently incorporated into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the individual fluid intelligence scores with a ridge-regression \citep{hoerl1970ridge}. The $\alpha$ parameter of the ridge model was considered as a hyperparameter ($\alpha \in \{0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cv-s and with mean squared error as optimization metric. Confound mitigation was performed inside of the outer cross-validation loop, to avoid leakage.
 
-Analysis code is available as jupyter notebook\footnote{\href{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_hcp.ipynb}{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_hcp.ipynb}} in the github repository of the 'mlconfound' package.
-
 
 \subsubsection*{ABIDE: testing motion- and center-bias in predictive models of autism spectrum disorder diagnosis}
 
@@ -442,16 +442,14 @@ The proposed tests were applied to provide evidence of center- and  motion-bias 
 Tangent correlation across the timeseries of the n=122 regions of the BASC \citep{bellec2010multi} atlas) was computed with nilearn\footnote{\href{http://nilearn.github.io/}{http://nilearn.github.io/}} \citep{huntenburg2017loading, esteve2015big}. 
 
 The resulting functional connectivity estimates were considered as features either (i) in their raw form or after applying (ii) feature regression \citep{rao2017predictive} or (iii) COMBAT \citep{johnson2007adjusting, fortin2018harmonization}.
-The investigated confounder variables were 'imaging center' and in-scanner motion, as measured by the mean framewise displacement of \cite{power2014methods}).
+The investigated confounder variables were 'imaging center' and 'in-scanner motion', as measured by the mean framewise displacement of \cite{power2014methods})
 Mean FD was non-linearly transformed to normal distribution with the quantile transformation \citep{beasley2009rank} as implemented in \emph{scikit-learn} \citep{pedregosa2011scikit} (see Supplementary Figure \ref{fig:abide-hist} for details).
 
-As COMBAT is not able to handle continuous variables (since it was primarily designed to remove "batch-effects"), motion was binned into 10 groups, based on equdistant data quantiles ranging from 0 to 1.
+As COMBAT is not able to handle continuous variables (since it was primarily designed to remove "batch-effects"), motion was binned into 10 groups, based on equidistant data quantiles ranging from 0 to 1.
 
 The total of five types (raw, feature regression of site, feature regression of motion, COMBAT with site, COMBAT with motion) of features were independently incorporated into a scikit-learn-based \citep{pedregosa2011scikit} machine learning procedure aiming to predict the diagnosis (DX: ASD vs. HC) with a L2-regularized logistic regression (as e.g. in \citep{dadi2019benchmarking}). The $C$ parameter of the model was considered as a hyperparameter ($C \in \{0.1, 1, 10\}$) and optimized in a nested cross-validation (cv) with 10 folds both in the inner and the outer cv-s and with area under the receiver operator curve (AUC under ROC) as optimization metric. Confound mitigation was performed inside of the outer cross-validation loop, to avoid leakage.
 
 Confounder testing was performed on the class probabilities (instead of the predicted labels).
-
-Analysis code is available as jupyter notebook\footnote{\href{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_abide.ipynb}{https://github.com/pni-lab/mlconfound/tree/master/notebooks/analysis\_abide.ipynb}} in the github repository of the 'mlconfound' package.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
@@ -460,14 +458,13 @@ Analysis code is available as jupyter notebook\footnote{\href{https://github.com
   \centering
   \includegraphics[width=0.75\paperwidth]{fig/sim_normal.eps}
   \caption{\textbf{Type-I error control and power of the conditional permutation-based confound testing for predictive modelling in normally distributed simulated data}. \\
-  Heatmaps depict positive rates (ratio of p-values lower than 0.05, color coded as shown by the palette at the bottom) in various simulations settings (100 simulations per tile) with different covariance between the target and the confounder (given as $R^2_{y,c}$ on the vertical axes of the heatmaps), for different sample sizes (N, horizontal axes).
-  Rows and columns correspond to simulations with different signal-in-prediction (y+c) and confound-to-signal values, respectively. The first row and the first column contain simulations under H0 (no confounder bias) and separated form the simulations under the alternative hypothesis with dashed line. Positive rates for the simulations under the null and alternative hypotheses can be interpreted as type I error rate and statistical power, respectively. The higher confidence limit for the type I error rates is 0.11 for each tile, with 5 tiles expected to pass it form all H0 tiles.
-  The actual weights $w_{Y}$, $w_{C}$ and $w_{e}$ are depicted at the bars on top of each heatmap and color coded as shown in the legend at the bottom. Above each heatmap, the strengths of the associations of $\hat{y}$ to $Y$ and $C$, respectively, are given with $R^2$ values averaged over all simulation cases of the heatmap.
+  Heatmaps depict positive rates (ratio of p-values lower than 0.05, color coded as shown by the palette at the bottom) in various simulations settings (100 simulations per tile) with different simulation weights $w_{y\yhat}$ (horizontal axis on each heatmap), $w_{yc}$ (vertical axis on each heatmap), $w_{c\yhat}$ (rows) and for different sample sizes (N, columns). Weights 0.2, 0.33, 0.4, 0.6, 0.66, 1 can be assigned to the following approximate explained variance values: 4\%, 10\%, 12\%, 25\%, 30\%, 50\%. First row contains simulations under the null hypothesis (H0, no confounder effect), rows 2-4 represent simulations from the alternative hypothesis (H1, confounder bias).
+  Positive rates for the simulations under the null and the alternative hypotheses can be interpreted as type I error rate and statistical power, respectively. The higher 95\% confidence limit for the type I error rates is 0.11 for each tile.
   }
   \label{fig:sim-normal}
 \end{figure}
 
-The conditional permutation based 'partial' and 'full' confound tests for predictive modelling have been implemented in the python package \emph{mlconfound}\footnote{\href{https://mlconfound.readthedocs.io}{https://mlconfound.readthedocs.io}}.
+The conditional permutation based \emph{partial} and \emph{full confounder tests} for predictive modelling have been implemented in the python package \emph{mlconfound}\footnote{\href{https://mlconfound.readthedocs.io}{https://mlconfound.readthedocs.io}}.
 
 \subsection{Simulations}
 
@@ -478,7 +475,7 @@ The conditional permutation based 'partial' and 'full' confound tests for predic
 
   \includegraphics[width=0.5\paperwidth]{fig/sim_non-norm.eps}
   \caption{\textbf{Robustness of conditional permutation based confound testing to non-normality and non-linearity.} \\
-  Simulations included variables with five different degrees of non-normality (top panel), as introduced with various $\delta$ and $\epsilon$ values of the \emph{sinh-arcsinh} transformation (yellow: normally distributed). Fisher's kurtosis and skewness is given for each distribution. False and true positive rates in the simulations under H0 and H1, respectively, for each investigated sample size (N), are depicted by barplots for both linear and sigmoid dependency structure. Upper 95\% binomial confidence interval corresponding to $alpha=0.05$ is shown with a vertical dashed line.}
+  Simulations included variables with five different degrees of non-normality (top panel), as introduced with various $\delta$ and $\epsilon$ values of the \emph{sinh-arcsinh} transformation (yellow: normally distributed). Fisher's kurtosis and skewness is given for each distribution. False and true positive rates in the simulations under H0 and H1, respectively, for each investigated sample size (N), are depicted by barplots for both linear and sigmoid dependency structure. Upper 95\% binomial confidence limit corresponding to $alpha=0.05$ is shown with a vertical dashed line.}
   \label{fig:sim-non-normal}
 \end{figure}
 
