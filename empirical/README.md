@@ -1,4 +1,4 @@
-# Empirical demonstration with neuroimaging data
+# Empirical demonstration of confounder testing with `mlconfound` on neuroimaging data
 
 This folder hosts data and code for reproducing the empirical results of the mlconfound manuscript.
 
