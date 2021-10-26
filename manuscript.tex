@@ -232,13 +232,13 @@ Within this setting, conditional independence testing and, specifically, the fra
 \begin{tabular}{l|rp{60mm}|c|>{\centering\arraybackslash}m{30mm}}
  &  & H0  & assumption needed for: & no assumptions about the distribution of: \\
 \hline
-\textbf{1.} & $\y \independent \yhat | \c$ \quad  & full confounder test: model exclusively driven by confounder & $Q(\cdot|\c)$ & $\yhat$ or $\y$ \\
+\textbf{1.} & $\yhat \independent \y | \c$ \quad  & full confounder test: model exclusively driven by the confounder & $Q(\y|\c)$ & $(\yhat,\y), (\yhat, \c)$ \\
 %\hline
-\textbf{2.} & $\y \independent \c | \yhat$ \quad & model captures all variance in confounder (not of interest) & $Q(\cdot|\yhat)$ & $\y$ or $\c$ \\
+\textbf{2.} & $\y \independent \c | \yhat$ \quad & model captures all variance in the confounder (not of interest) & $Q(\c|\yhat)$ & $(\y, \c), (\y, \yhat)$ \\
 %\hline
-\textbf{3.} & $\yhat \independent \c | \y$  \quad &  partial confounder  test: model does not capture more confound than what is present in the target & $Q(\cdot|\y)$ & $\yhat$ or $\c$ \\
+\textbf{3.} & $\yhat \independent \c | \y$  \quad &  partial confounder  test: model not directly driven by the confoudner & $Q(\c|\y)$ & $(\yhat, \c), (\yhat, \y)$ \\
 \end{tabular}
-\caption{\label{tab:conditional-independence-cases} Possibilities when testing conditional independence in potentially biased predictive models. \\The table lists the three possible null hypotheses (H0), and the variables where assumption about the joint/conditional distributions is required/not required.   ($y$: prediction target, $\yhat$: predictions, $\c$: confounder variable) }
+\caption{\label{tab:conditional-independence-cases} Possibilities when testing conditional independence in potentially biased predictive models. \\The table lists the three possible null hypotheses (H0), and the variables where assumption about the joint/conditional distributions is required/not required.   ($\y$: prediction target, $\yhat$: predictions, $\c$: confounder variable) }
 \end{table}
 
 Option 3, i.e. partial confounder testing is typically of interest when testing confounder bias of predictive models. Option 1, i.e. full confounder testing, might be also useful in diagnostics of predictive models, especially in the exploratory phase of model construction. Option 2 seems less appealing for model diagnostics and importantly, in this case the proposed variety of the CPT framework does not allow constructing a test which is non-parametric on $\yhat$.
@@ -246,18 +246,18 @@ Option 3, i.e. partial confounder testing is typically of interest when testing 
 In the following section, CPT is adapted for partial confounder testing (option 3). The formulation of the full confounder test (option 1) is analogous and given in Supplementary Material \ref{sup:full-test}.
 \subsubsection*{The partial confounder test}
 
-The partial confounder test generates a null-distribution for an arbitrary predefined test statistic $T(\y,\yhat,\c)$ by sampling permutation based "copies" of $\c$,
+The partial confounder test generates a null-distribution for an arbitrary predefined test statistic $T(\y,\yhat,\c)$ by sampling permutation based 'copy' of $\c$,
 
 \begin{equation}
     c_i^{(j)} \sim Q(\cdot|y_i)
      \label{eq:cond-copy}
 \end{equation}
 
-where, $Q(.|y)$ denotes the conditional distribution of $\c$ given $\y=y$ and $j=1,\dots, m$ indexes the "copy" of $\c$ so that
+where, $Q(.|y)$ denotes the conditional distribution of $\c$ given $\y=y_i$ and $j=1,\dots, m$ indexes the 'copy' of $\c$ so that
 
 $$ \c^{(j)} = (c_1^{(j)}, \dots, c_n^{(j)}) = (c_{\pi_1^{(j)}}, \dots, c_{\pi_n^{(j)}}) =  \c_{\boldsymbol{\pi}^{(j)}} $$
 
-is a permutation of the original vector $\c = (c_1, \dots, c_n)$, with its elements reordered according to the permutation $\quad \boldsymbol{\pi} \in S_n$ where $S_n$ denote the set of all permutations on the indices $\{1,\dots,n\}$.
+is a permutation of the original vector $\c = (c_1, \dots, c_n)$, with its elements reordered according to the permutation $ \boldsymbol{\pi} \in S_n$ where $S_n$ denote the set of all permutations on the indices $\{1,\dots,n\}$.
 
 As shown in \citep{berrett2020conditional}, to ensure that Eq. \ref{eq:cond-copy} holds, the $\c_{\boldsymbol{\pi}^{(j)}}$ copies must be drawn so that:
 
@@ -284,7 +284,7 @@ $$ p= \frac{\sum_{j=1}^m \mathbb{1} \{T(\y, \yhat, \c^{(j)}) \geq T(\y, \yhat, \
 
 While the group property of the conditioned permutations provides a straightforward proof for the validity of the approach, for an alternative verification see the proof of Theorem 1 in \citep{berrett2020conditional}.
 
-While the required permutations could be theoretically sampled with a simple Metropolis-Hastings algorithm that draws uniformly from $S_n$ at random, this way the acceptance ratio would be extremely low, even for moderate $n$ (except there is very low dependence of $\c$ on $\y$), resulting in slow mixing times. The partial confounder test can be, however, efficiently implemented with the parallelized pairwise Markov-Chain Monte Carlo sampler of \cite{berrett2020conditional} (Algorithm 1), that draws disjoint pairs in parallel and decides whether or not to swap them randomly, according to the odds ratio calculated from the conditional densities belonging to the original and swapped data. The acceptance odds ratio of swapping indices $i$ and $j$ is:
+The required permutations could be theoretically sampled with a simple Metropolis-Hastings algorithm that draws uniformly from $S_n$ at random. However, this way the acceptance ratio would be extremely low, even for moderate $n$ (except there is very low dependence of $\c$ on $\y$), resulting in slow mixing times. The partial confounder test can be, however, efficiently implemented with the parallelized pairwise Markov-Chain Monte Carlo sampler of \cite{berrett2020conditional} (Algorithm 1), that draws disjoint pairs in parallel and decides whether or not to swap them randomly, according to the odds ratio calculated from the conditional densities belonging to the original and swapped data. The acceptance odds ratio of swapping indices $i$ and $j$ is:
 
 \begin{equation}
 \frac{ q(c_j | y_i) q(c_i | y_j)}{q(c_i | y_i) q(c_j | y_j) }
@@ -343,16 +343,6 @@ $$T(\y, \yhat, \c^{(j)}) = R^2(\yhat, \c^{(j)})$$
 
 which allows interpretable, two tailed inference about confoudner-bias in predictive modelling.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[!b]
-  \centering
-  \includegraphics[width=0.75\paperwidth]{fig/sim_h0_demo.eps}
-  \caption{\textbf{Type-I error control of partial Spearman correlation, linear and GAM-based conditional permutation test}. \\
-  Type-I error control was investigated in three example cases: normal conditional distribution with linear dependency (first row), non-normal conditional distribution with linear dependency (second row) and normal conditional distribution with non-normal (sigmoid) dependency (third row). Non-normal conditional distribution on the second plot is illustrated with blue density diagrams and dependency is depicted with blue dotted lines an all plots. False positive rates for the three investigated tests is shown in heatmaps, with darker red meaning higher values. The upper limit for the binomial confidence interval corresponding to $alpha=0.05$ is 0.065. Values below this threshold indicate a valid type-I error control and colored white.
-  }
-  \label{fig:sim-h0-demo}
-\end{figure}
-
 
 \subsection{Validation on simulated data}
 
@@ -360,7 +350,7 @@ Using CPT to test confounder-bias in predictive modelling allows relaxing assump
 \cite{berrett2020conditional} give a detailed analysis of the robustness of their CPT approach when estimating the conditional distribution with re-using the tested data via linear regression and, also, against misspecifying the conditional distribution of interest to introduce non-linearity.
 
 Here I extend these results by performing simulations that evaluate the GAM- and multinomial liner model-based approaches, in a form that is accessible for power calculations in predictive modelling (considering various weights of the target signal in $c$ and the confounder and the target signals in $\yhat$).
-Moreover, I investigate the robustness of the tests against the violation of normality and linearity of the conditional distributions $D(\c|\y)$ and $D(\yhat|\y)$
+Moreover, I investigate the robustness of the tests against the violation of normality and linearity of the conditional distributions $D(\c|\y)$ and $D(\yhat|\y)$.
 
 Simulations are performed separately for the 'partial' and 'full' conditional confound tests.
 
@@ -371,28 +361,28 @@ $$ \y \sim \mathcal{N}(0, 1) $$
 
 Next, the confounder signal is simulated as:
 
-$$ \c \sim f_{\delta, \epsilon}(\mathcal{N}(0, 1)) + w_{yc} \quad g(\y) $$
+$$ \c \sim f_{\delta, \epsilon}(\mathcal{N}(0, 1)) + w_{yc} \, g(\y) $$
 
-where $f$ is a function to introduce non-normality, namely the \emph{sinh-arcsinh} transformation of \cite{jones2009sinh} defiend as:
+where $f$ is a function to introduce non-normality, namely the \emph{sinh-arcsinh} transformation of \cite{jones2009sinh} definend as:
 
 $$f_{\delta, \epsilon}(\boldsymbol{x}) = sinh(\delta sinh^{-1}(\boldsymbol{x}) - \epsilon)$$
 
 where the parameters $\delta$ and $\epsilon$ control the kurtosis and skewness of the resulting \emph{sinh-arcsinh} distribution, with $\delta=1$ and $\epsilon=0$ producing the identity function (i.e. no non-normality introduced).
 
-Moreover, non-linearity can be introduced with the function $g$, which can be simply the identity function (no non-linearity is introduced) or e.g. a sigmoid-shaped function, in pour case:
+Moreover, non-linearity can be introduced with the function $g$, which can be simply the identity function (no non-linearity is introduced) or e.g. a sigmoid-shaped function, in our case:
 
 $$ g(\boldsymbol{x}) = tanh(\boldsymbol{x}) $$
 
 
 The simulated predicted values are constructed analogously:
 
-$$ \yhat \sim f_{\delta, \epsilon}(\mathcal{N}(0, 1)) + w_{yyhat} \quad g(\y)  + w_{c\hat{y}} \quad g(\y)$$
+$$ \yhat \sim f_{\delta, \epsilon}(\mathcal{N}(0, 1)) + w_{yyhat} \: g(\y) \, + \, w_{c\hat{y}} \: g(\y)$$
 
 To test the implementation for categorical variables, simulated $\y$, $\yhat$ and $\c$ variables are binarized by thresholding at 0.
 
 \subsubsection*{Simulations for comparison with partial Spearman correlation and linear CPT}
 
-To demonstrate the need for the proposed GAM-based CPT approach for partial confounder testing, its validity was contrasted to partial Spearman correlation and the linear variety of CPT (based on eq. \ref{eq:linreg}, as described by \citep{berrett2020conditional}) in the following parameters:
+To demonstrate the need for the proposed GAM-based CPT approach for partial confounder testing, its validity was contrasted to partial Spearman correlation and the linear variety of CPT (based on eq. \ref{eq:linreg}, as described by \cite{berrett2020conditional}) with the following simulation parameters:
 \begin{itemize}
     \item sample size: $n = 1000$
     \item $w_{c\hat{y}} = 0$ (H0 simulations only)
@@ -463,6 +453,16 @@ Confounder testing was performed on the class probabilities (instead of the pred
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[!b]
+  \centering
+  \includegraphics[width=0.75\paperwidth]{fig/sim_h0_demo.eps}
+  \caption{\textbf{Type-I error control of partial Spearman correlation, linear and GAM-based conditional permutation test}. \\
+  Type-I error control was investigated in three example cases: normal conditional distribution with linear dependency (first row), non-normal conditional distribution with linear dependency (second row) and normal conditional distribution with non-normal (sigmoid) dependency (third row). Non-normal conditional distribution on the second plot is illustrated with blue density diagrams and dependency is depicted with blue dotted lines an all plots. False positive rates for the three investigated tests is shown in heatmaps, with darker red meaning higher values. The upper limit for the binomial confidence interval corresponding to $alpha=0.05$ is 0.065. Values below this threshold indicate a valid type-I error control and colored white.
+  }
+  \label{fig:sim-h0-demo}
+\end{figure}
 
 \begin{figure}[!b]
   \centering
