@@ -154,15 +154,16 @@ if __name__ == '__main__':
                                     n_jobs=1,
                                     progress=False)
 
-            res_lin = confound_test(y, yhat, c,
-                                    cat_y=args.cat_y,
-                                    cat_yhat=args.cat_yhat,
-                                    cat_c=args.cat_c,
-                                    num_perms=num_perms,
-                                    cond_dist_method='linear',
-                                    random_state=_random_state,
-                                    n_jobs=1,
-                                    progress=False)
+            # for efficiency
+            res_lin = np.nan #confound_test(y, yhat, c,
+                             #       cat_y=args.cat_y,
+                             #       cat_yhat=args.cat_yhat,
+                             #       cat_c=args.cat_c,
+                             #       num_perms=num_perms,
+                             #       cond_dist_method='linear',
+                             #       random_state=_random_state,
+                             #       n_jobs=1,
+                             #       progress=False)
 
             # do partial correlation, too
             if args.mode.startswith('partial'):
