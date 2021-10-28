@@ -126,19 +126,13 @@ if __name__ == '__main__':
             y, c, yhat = simulate_y_c_yhat(w_yc=w_yc,
                                            w_yyhat=w_yyhat, w_cyhat=w_cyhat,
                                            n=n,
+                                           bin_y=args.cat_y, 
+                                           bin_c=args.cat_c, 
+                                           bin_yhat=args.cat_yhat, 
                                            random_state=_random_state,
                                            delta=args.delta,
                                            epsilon=args.epsilon,
                                            nonlin_trf_fun=nonlin_trf)
-
-            # is it categorical?
-            # right now only binary variables can be simulated
-            if args.cat_y:
-                y = (y > 0).astype(int)
-            if args.cat_yhat:
-                yhat = (yhat > 0).astype(int)
-            if args.cat_c:
-                c = (c > 0).astype(int)
 
             # test
             res_gam = confound_test(y, yhat, c,
