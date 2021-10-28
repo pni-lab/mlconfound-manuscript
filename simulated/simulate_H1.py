@@ -149,7 +149,7 @@ if __name__ == '__main__':
                                     progress=False)
 
             # for efficiency
-            res_lin = res_gam.copy() #confound_test(y, yhat, c,
+            res_lin = res_gam #confound_test(y, yhat, c,
                              #       cat_y=args.cat_y,
                              #       cat_yhat=args.cat_yhat,
                              #       cat_c=args.cat_c,
@@ -158,7 +158,6 @@ if __name__ == '__main__':
                              #       random_state=_random_state,
                              #       n_jobs=1,
                              #       progress=False)
-            res_lin.p = np.nan
 
             # do partial correlation, too
             if args.mode.startswith('partial'):
