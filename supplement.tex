@@ -27,7 +27,61 @@ The permutation-based copies of $\y$ are then of $\y^{(j)} = \y_{\pi^{(j)}}$ whi
 that is, according to the $q^n(\cdot|\c) := q(\cdot | c_1) \dots q(\cdot|c_n)$ product density corresponding to the conditional distribution $Q(\cdot|\c)$. Note that Eq. \ref{eq-pperm} does not necessarily assume a continuous distribution.
 For a verification of the valid type I error control of this approach refer to Theorem 1 in \citep{berrett2020conditional}.
 
+\begin{figure}[H]
+  \centering
+  \fbox{
+   \includegraphics[width=0.4\paperwidth]{fig/raw/sim_h1_bbb_partial_d10e0_lin_cpt_gam.pdf}}
+  \caption{Heatmaps showing the positive rates of the 'partial' confounder test, with categorical variables, normal conditional distribution and linear dependence.}
+  \label{fig:sim-bbb-lin-partial}
+\end{figure}
 
+\begin{figure}[H]
+  \centering
+  \fbox{
+   \includegraphics[width=0.4\paperwidth]{fig/raw/sim_h1_bbb_full_d1e0_linear_cpt_gam.pdf}}
+  \caption{Heatmaps showing the positive rates of the 'full' confounder test, with numerical variables, normal conditional distribution and linear dependence.}
+  \label{fig:sim-ccc-lin-full}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \fbox{
+   \includegraphics[width=0.4\paperwidth]{fig/raw/sim_h1_bbb_full_d1e0_linear_cpt_gam.pdf}}
+  \caption{Heatmaps showing the positive rates of the 'full' confounder test, with categorical variables, normal conditional distribution and linear dependence.}
+  \label{fig:sim-bbb-lin-full}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \fbox{
+   \includegraphics[width=0.4\paperwidth]{fig/raw/sim_h1_ccc_partial_d10e0_sig_cpt_gam.pdf}}
+  \caption{Heatmaps showing the positive rates of the 'partial' confounder test, with numerical variables, normal conditional distribution and sigmoid dependence.}
+  \label{fig:sim-ccc-sig-partial}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \fbox{
+   \includegraphics[width=0.4\paperwidth]{fig/raw/sim_h1_bbb_partial_d10e0_sig_cpt_gam.pdf}}
+  \caption{Heatmaps showing the positive rates of the 'partial' confounder test, with categorical variables, normal conditional distribution and sigmoid dependence.}
+  \label{fig:sim-bbb-sig-partial}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \fbox{
+   \includegraphics[width=0.4\paperwidth]{fig/raw/sim_h1_ccc_full_d1e0_sigmoid_cpt_gam.pdf}}
+  \caption{Heatmaps showing the positive rates of the 'full' confounder test, with numerical variables, normal conditional distribution and sigmoid dependence.}
+  \label{fig:sim-ccc-sig-full}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \fbox{
+   \includegraphics[width=0.4\paperwidth]{fig/raw/sim_h1_bbb_full_d1e0_sigmoid_cpt_gam.pdf}}
+  \caption{Heatmaps showing the positive rates of the 'full' confounder test, with categorical variables, normal conditional distribution and sigmoid dependence.}
+  \label{fig:sim-bbb-sig-full}
+\end{figure}
 
 \begin{figure}[H]
   \centering
@@ -47,12 +101,4 @@ For a verification of the valid type I error control of this approach refer to T
    }
   \caption{Histogram of mean framewise displacement in the ABIDE dataset, before (left) and after (right) quantile transformation.}
   \label{fig:abide-hist}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \fbox{
-   \includegraphics[width=0.75\paperwidth]{fig/raw/sim_h1_ccc_partial_d10e0_sig_cpt_gam.pdf}}
-  \caption{Heatmaps showing the positive rates of the 'partial' confounder test, with normal conditional distribution and sigmoid dependence.}
-  \label{fig:sim-ccc-sig-partial}
 \end{figure}
