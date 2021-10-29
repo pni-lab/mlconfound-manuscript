@@ -3468,15 +3468,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.5280558"
-     inkscape:cx="259.49043"
-     inkscape:cy="276.82234"
+     inkscape:cx="507.51802"
+     inkscape:cy="274.20463"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
      inkscape:window-height="1016"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="1467"
      inkscape:window-maximized="1"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -7673,45 +7673,32 @@
     </g>
     <g
        id="g40264"
-       transform="matrix(0.20142245,0,0,-0.20142245,76.962182,180.82203)">
+       transform="matrix(0.20142245,0,0,-0.20142245,76.433015,180.82203)">
       <text
-         y="-164.60583"
-         x="6.3068609"
+         y="-206.6402"
+         x="8.9340086"
          transform="scale(1,-1)"
          style="font-variant:normal;font-weight:normal;font-size:11px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#262626;fill-opacity:1;fill-rule:nonzero;stroke:none"
          id="text40262">
         <tspan
-           y="-164.60583"
-           x="6.3068609"
-           style="font-size:15.76289082px"
+           y="-206.6402"
+           x="8.9340086"
+           style="font-size:14.0114584px"
            sodipodi:role="line"
-           id="tspan40260">95% conf.</tspan>
-      </text>
-      <text
-         id="text40268"
-         style="font-variant:normal;font-weight:normal;font-size:11px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#262626;fill-opacity:1;fill-rule:nonzero;stroke:none"
-         transform="scale(1,-1)"
-         x="32.004799"
-         y="-206.06667">
-        <tspan
-           id="tspan40266"
-           sodipodi:role="line"
-           style="font-size:15.76289082px"
-           x="32.004799"
-           y="-206.06667">H0</tspan>
+           id="tspan40260">H0 95% ci</tspan>
       </text>
     </g>
     <text
        id="text40725"
-       y="135.48006"
+       y="134.9509"
        x="98.290611"
        style="font-style:normal;font-weight:normal;font-size:3.22275925px;line-height:14.50241661px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.15106684"
        xml:space="preserve"><tspan
          style="stroke-width:0.15106684"
-         y="135.48006"
+         y="134.9509"
          x="98.290611"
          id="tspan40723"
-         sodipodi:role="line">false positive rate</tspan></text>
+         sodipodi:role="line">type I error rate</tspan></text>
     <g
        transform="matrix(0.20096153,0,0,-0.20096153,21.360628,126.99963)"
        inkscape:label="example_jointplot_normal_sigmoid_yc"
@@ -8041,5 +8028,23 @@
            d="M 179.54643,32.46 V 173.79771" />
       </g>
     </g>
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#808080;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect2649"
+       width="41.209763"
+       height="137.82764"
+       x="156.40794"
+       y="2.3632214" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:5.64444447px;line-height:25.39999962px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="162.51675"
+       y="135.16951"
+       id="text2653"><tspan
+         sodipodi:role="line"
+         id="tspan2651"
+         x="162.51675"
+         y="135.16951"
+         style="font-size:4.23333311px;stroke-width:0.26458332">proposed test</tspan></text>
   </g>
 </svg>
