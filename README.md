@@ -1,7 +1,13 @@
 
-## Git repositoty of the `mlconfound` manuscript.
+## Git repositoty of the manuscript entitled
+# Statistical quantification of confounding bias in predictive modelling
 ![tex2pdf](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/tex2pdf.yml/badge.svg)
 ![tex2pdf](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/lint_latex.yml/badge.svg)
+
+The manuscript describes and validates the package `mlconfound`.
+
+Read the [docs](https://mlconfound.readthedocs.io). 
+[![Documentation Status](https://readthedocs.org/projects/mlconfound/badge/?version=latest)](https://mlconfound.readthedocs.io/en/latest/?badge=latest).
 
 
 ### Abstarct
