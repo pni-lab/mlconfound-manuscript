@@ -1,16 +1,16 @@
 
+![tex2pdf](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/tex2pdf.yml/badge.svg) ![tex2pdf](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/lint_latex.yml/badge.svg)
+
 ## Git repositoty of the manuscript entitled
 # Statistical quantification of confounding bias in predictive modelling
-![tex2pdf](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/tex2pdf.yml/badge.svg)
-![tex2pdf](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/lint_latex.yml/badge.svg)
+by [Tamas Spisak](https://pni-lab.github.io/)
 
 The manuscript describes and validates the package `mlconfound`.
 
 Read the [docs](https://mlconfound.readthedocs.io). 
 [![Documentation Status](https://readthedocs.org/projects/mlconfound/badge/?version=latest)](https://mlconfound.readthedocs.io/en/latest/?badge=latest).
 
-
-### Abstarct
+### Abstract
 The lack of non-parametric statistical tests for confounding bias significantly hampers the development of robust, valid and generalizable predictive models in many fields of research.
 Here I propose the *partial* and *full confounder tests*, which, for a given confounder variable, probe the null hypotheses of *unconfounded* and *fully confounded models*, respectively.
 
