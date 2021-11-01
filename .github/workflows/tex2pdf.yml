@@ -10,4 +10,5 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           root_file: manuscript.tex
+          latexmk_shell_escape: true
 
