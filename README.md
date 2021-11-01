@@ -1,5 +1,5 @@
 
-![tex2pdf](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/tex2pdf.yml/badge.svg) ![tex2pdf](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/lint_latex.yml/badge.svg)
+![lintex](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/lint_latex.yml/badge.svg)
 
 ## Git repositoty of the manuscript entitled
 # Statistical quantification of confounding bias in predictive modelling
