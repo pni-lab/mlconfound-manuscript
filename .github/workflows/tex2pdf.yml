@@ -1,21 +1,25 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Convert manuscript to pdf
+name: tex2pdf
 
 on: [push]
+
 jobs:
-  build_latex:
+  build-tex:
     runs-on: ubuntu-latest
+    name: tex2pdf
     steps:
-      - name: Set up Git repository
-        uses: actions/checkout@v2
-      - name: Compile LaTeX document
-        uses: xu-cheng/latex-action@v2
-        with:
-          root_file: manuscript.tex
-          latexmk_use_xelatex: false
-      
-      - uses: actions/upload-artifact@master
-        with:
-          name: my-artifact
-          path: manuscript.pdf
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Convert to pdf
+      id: convert-to-pdf
+      uses: closoco/pdflatex-action@v1.0.0
+      with:
+        texFile: manuscript.tex
+    - name: Store pdf
+      uses: actions/upload-artifact@v2
+      with:
+        name: manuscript.pdf
+        path: manuscript.pdf
+
+
