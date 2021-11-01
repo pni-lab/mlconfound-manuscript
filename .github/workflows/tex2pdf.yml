@@ -13,7 +13,7 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           root_file: manuscript.tex
-          latexmk_use_xelatex: true
+          latexmk_use_xelatex: false
       
       - uses: actions/upload-artifact@master
         with:
