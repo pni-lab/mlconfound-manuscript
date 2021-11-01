@@ -71,7 +71,7 @@ This work aims to construct a statistical test for confounding bias that (i) gua
 %fig:sim-h0-demo
 \begin{figure}[!b]
   \centering
-  \includegraphics[width=0.5\paperwidth]{fig/sim_h0_demo.eps}
+  \includegraphics[width=0.5\paperwidth]{fig/sim_h0_demo.pdf}
   \caption{\textbf{Type I error control of partial Spearman correlation, linear and GAM-based conditional permutation test}. \\
   Type I error control was investigated in three example cases: normal conditional distribution with linear dependency (first row), slightly non-normal conditional distribution with linear dependency (second row) and normal conditional distribution with non-normal (sigmoid) dependency (third row). Non-normal conditional distribution on the second plot is illustrated with blue density diagrams (kurtosis: -0.8, skewness: -0.1). False positive rates for confounder contributions ($w_{yc}$) and predictive performances ($w_{y\hat{y}}$) is shown in heatmaps. The upper limit for the binomial confidence interval corresponding to $alpha=0.05$ is 0.065. Values below this threshold (colored white) indicate a valid type I error control.
   }
@@ -83,7 +83,7 @@ This work aims to construct a statistical test for confounding bias that (i) gua
 % fig: overview
 \begin{figure}[!b]
   \centering
-  \includegraphics[width=0.6\paperwidth]{fig/overview.eps}
+  \includegraphics[width=0.6\paperwidth]{fig/overview.pdf}
   \caption{\textbf{Graphical representation of the proposed partial confounder test}. \\
     The partial confounder test models the conditional distribution of the confounder, given the target variable, with a generalized additive model (GAM). The parallel-pairwise Markov-chain Monte-Carlo (MCMC) sampler draws permutations of the confounder variable that comply with the GAM-based conditional distribution (permutation 1, 2, ..., m). The test statistic (coefficient of determination, $R^2$) is then computed between the model predictions and the original, as well as the permuted confounder variables. The original and the permuted test statistics construct the p-value as the ratio of permuted test statistics more extreme than the original. Figure source code available as jupyter notebook: \href{https://github.com/pni-lab/mlconfound-manuscript/blob/main/simulated/overview-fig.ipynb}{https://github.com/pni-lab/mlconfound-manuscript/blob/main/simulated/overview-fig.ipynb}
   }
@@ -108,7 +108,7 @@ The proposed \emph{partial} and \emph{full confounder tests} have been implement
 %fig:sim-normal
 \begin{figure}[!b]
   \centering
-  \includegraphics[width=0.6\paperwidth]{fig/sim_normal.eps}
+  \includegraphics[width=0.6\paperwidth]{fig/sim_normal.pdf}
   \caption{\textbf{Type I error control and power of the partial confounder test based on simulations with normal conditional distribution and linear dependencies.} \\
   Heatmaps depict positive rates (ratio of p-values lower than 0.05, color coded as shown by the palette on the right) in various simulations settings (100 simulations per tile) with different simulation weights $w_{y\hat{y}}$ (predictive performance; horizontal axis on each heatmap), $w_{yc}$ (confounder-target association; vertical axis on each heatmap), $w_{c\hat{y}}$ (degree of confoudner bias; rows) and for different sample sizes (N, columns). Weights 0.2, 0.33, 0.4, 0.6, 0.66, 1.0 can be assigned to the following approximate explained variance values: 4\%, 10\%, 12\%, 25\%, 30\%, 50\%, respectively. First row contains simulations under the null hypothesis (H0, no confounder bias), rows 2-4 represent simulations from the alternative hypothesis (H1, confounding bias).
   Positive rates for the simulations under the null and the alternative hypotheses can be interpreted as type I error rate and statistical power, respectively. The higher 95\% confidence limit for a positive rate of $alpha=0.05$ is 0.11 for each tile.
@@ -122,7 +122,7 @@ The proposed \emph{partial} and \emph{full confounder tests} have been implement
 \begin{figure}[!b]
   \centering
 
-  \includegraphics[width=0.5\paperwidth]{fig/sim_non-norm.eps}
+  \includegraphics[width=0.5\paperwidth]{fig/sim_non-norm.pdf}
   \caption{\textbf{Robustness of conditional permutation based confound testing to non-normality and non-linearity.} \\
   Simulations included variables with five different degrees of non-normality (top panel), as introduced with various $\delta$ and $\epsilon$ values of the \emph{sinh-arcsinh} transformation (yellow: normally distributed). Fisher's kurtosis and skewness is given for each distribution. False and true positive rates in the simulations under H0 and H1, respectively, for each investigated sample size (N), are depicted by barplots for both linear and sigmoid dependency structure. Upper 95\% binomial confidence limit corresponding to $alpha=0.05$ is shown with a vertical dashed line.}
   \label{fig:sim-non-normal}
