@@ -1,4 +1,5 @@
 
+[![arXiv](https://img.shields.io/badge/arXiv-2111.00814-<COLOR>.svg)](https://arxiv.org/abs/2111.00814)
 ![lintex](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/lint_latex.yml/badge.svg)
 
 ## Git repositoty of the manuscript entitled
