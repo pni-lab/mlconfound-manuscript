@@ -3,7 +3,7 @@ graph {
 	c [label=c]
 	y [label=y]
 	yhat [label=<y&#770;>]
-	c -- yhat [label="0.359 (p<0.0001*)" style=dashed]
+	c -- yhat [label="0.062 (p<0.0001*)" style=dashed]
 	c -- y [label=0.028]
-	y -- yhat [label=0.02]
+	y -- yhat [label=0.031]
 }

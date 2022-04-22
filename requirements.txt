@@ -11,3 +11,4 @@ pygam>=0.8.0
 tqdm>=4.62.0
 pingouin>=0.4.0
 mlconfound>=0.20.0
+econml>=0.13.0
