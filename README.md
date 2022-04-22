@@ -1,5 +1,6 @@
 
-![tex2pdf](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/tex2pdf.yml/badge.svg) ![tex2pdf](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/lint_latex.yml/badge.svg)
+[![arXiv](https://img.shields.io/badge/arXiv-2111.00814-<COLOR>.svg)](https://arxiv.org/abs/2111.00814)
+![lintex](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/lint_latex.yml/badge.svg)
 
 ## Git repositoty of the manuscript entitled
 # Statistical quantification of confounding bias in predictive modelling
@@ -32,7 +33,7 @@ The tests (implemented in the package [mlconfound](https://mlconfound.readthedoc
 `./reproduce.sh`
   
 ### Citation
-T. Spisak, Statistical quantification of confounding bias in predictive modelling, in prep. 2021.
+T. Spisak, Statistical quantification of confounding bias in predictive modelling, preprint on [arXiv:2111.00814](http://arxiv-export-lb.library.cornell.edu/abs/2111.00814), 2021.
 
 ### Licensing
 - Manuscript source and figures (contents of the root folder and the `fig` dir): **CC BY**
