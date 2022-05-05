@@ -23,3 +23,12 @@ Files required in the `hcp` folder:
 - `hcp1200_behavioral_data.csv`: all behavioral and demographic data of the HCP1200-release
 - `netmats2_partial-correlation.txt`: Partial correlations matrices (with a slight regularization), flattened format, i.e one row per subject
 - `subjectIDs.txt`: subject IDs, links rows of the netmat files to the 'Subject' column of the behavioral dataframe.
+
+#### Preformatted HCP data is also available via DataLad (credentials needed)
+```
+export WEBDAV_USERNAME=XXXX
+export WEBDAV_PASSWORD=XXXX-XXXX-XXXX-XXXX
+datalad install -s git@github.com:pni-data/hcp-connectivity.git hcp_data
+datalad siblings -d hcp_data enable -s sciebo.sfb289
+datalad get hcp_data
+```
