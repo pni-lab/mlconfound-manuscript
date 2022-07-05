@@ -24,7 +24,7 @@ The tests (implemented in the package [mlconfound](https://mlconfound.readthedoc
 ### This repository contains:
 - The latex source of the manuscript describing the 'mlconfound' approach: 
   see `manuscript.tex` and related files.
-- Sll source code required to reproduce the results in the manuscript.
+- All source code required to reproduce the results in the manuscript.
   See the directories: `simulated` and `empirical`.
 - All results. See the directories `simulated/results` and the analysis notebooks.
 - All figures. See the directory `fig`.
