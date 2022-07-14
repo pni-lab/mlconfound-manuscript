@@ -1,6 +1,6 @@
 
 [![arXiv](https://img.shields.io/badge/arXiv-2111.00814-<COLOR>.svg)](https://arxiv.org/abs/2111.00814)
-![lintex](https://github.com/pni-lab/mlconfound-manuscript/actions/workflows/lint_latex.yml/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/mlconfound/badge/?version=latest)](https://mlconfound.readthedocs.io/en/latest/?badge=latest).
 
 ## Git repositoty of the manuscript entitled
 # Statistical quantification of confounding bias in predictive modelling
@@ -9,7 +9,6 @@ by [Tamas Spisak](https://pni-lab.github.io/)
 The manuscript describes and validates the package `mlconfound`.
 
 Read the [docs](https://mlconfound.readthedocs.io). 
-[![Documentation Status](https://readthedocs.org/projects/mlconfound/badge/?version=latest)](https://mlconfound.readthedocs.io/en/latest/?badge=latest).
 
 ### Abstract
 The lack of non-parametric statistical tests for confounding bias significantly hampers the development of robust, valid and generalizable predictive models in many fields of research.
