@@ -32,10 +32,6 @@ The tests (implemented in the package [mlconfound](https://mlconfound.readthedoc
 ### Citation
 T. Spisak, Statistical quantification of confounding bias in predictive modelling, preprint on [arXiv:2111.00814](http://arxiv-export-lb.library.cornell.edu/abs/2111.00814), 2021.
 
-### Licensing
-- Manuscript source and figures (contents of the root folder and the `fig` dir): **CC BY**
-- Source code (contents of the `empirical` and `simulated` folders): **GPL3**
-
 ### Acknowledgements
 The manuscript builds on an aesthetic and simple LaTeX style suitable for "preprint" publications such as arXiv and bio-arXiv, etc. 
 It is based on the [**nips_2018.sty**](https://media.nips.cc/Conferences/NIPS2018/Styles/nips_2018.sty) style.
